@@ -113,6 +113,22 @@ export const chatRouter = createTRPCRouter({
           ),
         );
 
+        const onError = async (error: unknown) => {
+          console.error(error);
+
+          let errorMessage = "Unknown error";
+          if (error instanceof Error) {
+            errorMessage = error.message;
+          } else if (typeof error === "string") {
+            errorMessage = error;
+          }
+
+          await ctx.db.conversationItem.update({
+            where: { id: aiConversationItem.id },
+            data: { content: `[Error]: ${errorMessage}`, isStreaming: false },
+          });
+        };
+
         const stream = streamText({
           model,
 
@@ -141,20 +157,24 @@ export const chatRouter = createTRPCRouter({
           },
 
           onFinish: async (message) => {
+            let finalMessage = message.text;
+
+            if (!finalMessage) {
+              finalMessage = "[Error]: empty response from model";
+            }
+
             await ctx.db.conversationItem.update({
               where: { id: aiConversationItem.id },
-              data: { content: message.text, isStreaming: false },
+              data: { content: finalMessage, isStreaming: false },
             });
           },
 
-          onError: (error) => {
-            console.error(error);
-          },
+          onError,
         });
 
         void stream.consumeStream({
           onError: (error) => {
-            console.error(error);
+            void onError(error);
           },
         });
       }
