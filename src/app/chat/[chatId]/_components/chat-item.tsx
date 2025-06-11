@@ -3,6 +3,7 @@ import { FileIcon } from "lucide-react";
 import { z } from "zod";
 import { attachmentFileSchema } from "~/app/domains/chat/schemas";
 import { Markdown } from "~/components/markdown";
+import { TextShimmer } from "~/components/text-shimmer";
 import { cn } from "~/lib/utils";
 
 export const ChatItem = ({
@@ -25,7 +26,15 @@ export const ChatItem = ({
             "bg-primary text-primary-foreground ml-auto w-fit max-w-[75%] rounded-lg px-4 py-2.5",
         )}
       >
-        <Markdown content={conversationItem.content} />
+        {conversationItem.content ? (
+          <Markdown content={conversationItem.content} />
+        ) : (
+          <div>
+            <TextShimmer className="text-sm leading-relaxed" duration={1.2}>
+              Thinking...
+            </TextShimmer>
+          </div>
+        )}
       </div>
 
       {attachmentFilesParseResult.success && (
