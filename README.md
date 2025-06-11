@@ -1,3 +1,43 @@
+Challenge accepted: https://cloneathon.t3.chat
+
+# AI Chat App Requirements
+
+## Core Requirements (Required)
+
+- [x] Chat with Various LLMs
+  - Implement support for multiple language models and providers
+- [ ] Authentication & Sync
+  - User authentication with chat history synchronization
+- [ ] Browser Friendly
+  - Ensure web-based functionality without native app requirements
+- [x] Easy to Try
+  - Provide simple way for users to test the application
+
+## Bonus Features
+
+- [x] Attachment Support
+  - Allow users to upload files (images and pdfs)
+- [ ] Image Generation Support
+  - Add AI-powered image generation capabilities
+- [x] Syntax Highlighting
+  - Implement beautiful code formatting and highlighting
+- [x] Resumable Streams
+  - Enable continuing generation after page refresh
+- [ ] Chat Branching
+  - Create alternative conversation paths
+- [ ] Chat Sharing
+  - Allow sharing conversations with others
+- [ ] Web Search
+  - Integrate real-time web search functionality
+- [x] Bring Your Own Key
+  - Support for custom API keys
+- [ ] Mobile App
+  - Develop mobile version alongside web app
+- [ ] Custom Features
+  - Add your own unique and creative features
+
+---
+
 # Create T3 App
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
