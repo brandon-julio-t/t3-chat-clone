@@ -18,6 +18,7 @@ export const env = createEnv({
     ELECTRIC_SQL_BACKEND_URL: z.string().url(),
     ELECTRIC_SQL_SOURCE_ID: z.string(),
     ELECTRIC_SQL_SOURCE_SECRET: z.string(),
+    BLOB_READ_WRITE_TOKEN: z.string(),
   },
 
   /**
@@ -40,6 +41,7 @@ export const env = createEnv({
     ELECTRIC_SQL_BACKEND_URL: process.env.ELECTRIC_SQL_BACKEND_URL,
     ELECTRIC_SQL_SOURCE_ID: process.env.ELECTRIC_SQL_SOURCE_ID,
     ELECTRIC_SQL_SOURCE_SECRET: process.env.ELECTRIC_SQL_SOURCE_SECRET,
+    BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

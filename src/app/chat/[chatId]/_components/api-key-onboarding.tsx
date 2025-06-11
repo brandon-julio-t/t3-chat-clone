@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { saveChatApiKey } from "../server-actions";
+import { saveChatApiKey } from "../server-actions/chat-api-key";
 import { useRouter } from "next/navigation";
 import { Button } from "~/components/ui/button";
 

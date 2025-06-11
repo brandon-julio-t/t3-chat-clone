@@ -1,6 +1,7 @@
 import { getSession } from "~/lib/auth";
 import { ChatDetailPageView } from "./_components/page-view";
-import { getChatApiKey, getChatModel } from "./server-actions";
+import { getChatApiKey } from "./server-actions/chat-api-key";
+import { getChatModel } from "./server-actions/chat-model";
 import { ApiKeyOnboarding } from "./_components/api-key-onboarding";
 
 const ChatDetailPage = async ({
