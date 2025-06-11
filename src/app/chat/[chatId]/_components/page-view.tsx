@@ -45,7 +45,7 @@ export const ChatDetailPageView = ({
     },
   });
 
-  const [conversationItems, dispatchConversationItems] = React.useOptimistic<
+  const [_conversationItems, dispatchConversationItems] = React.useOptimistic<
     ConversationItem[],
     { action: "add"; newItem: ConversationItem }
   >(conversationItemsShape?.data ?? [], (state, action) => {
@@ -58,6 +58,15 @@ export const ChatDetailPageView = ({
     return state;
   });
 
+  const conversationItems = React.useMemo(
+    () =>
+      _conversationItems.sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      ),
+    [_conversationItems],
+  );
+
   const form = useForm({
     resolver: zodResolver(sendMessageSchema),
     defaultValues: {
@@ -65,6 +74,7 @@ export const ChatDetailPageView = ({
       chatModel: initialModel,
       conversationId: chatId,
       newChatId: ulid(),
+      aiAssistantId: ulid(),
       newChatContent: "",
       attachmentFiles: [],
     },
@@ -75,11 +85,19 @@ export const ChatDetailPageView = ({
     name: "attachmentFiles",
   });
 
-  const triggerChatCompletionMutation = api.chat.sendMessage.useMutation();
+  const sendMessageMutation = api.chat.sendMessage.useMutation({
+    onError: (error) => {
+      console.error(error);
+      toast.error("Error sending message", {
+        description: error.message ?? "Unknown error",
+      });
+    },
+  });
 
   const onSubmit = form.handleSubmit(
     async (data) => {
       const id = ulid();
+      const aiAssistantId = ulid();
 
       React.startTransition(async () => {
         dispatchConversationItems({
@@ -97,8 +115,24 @@ export const ChatDetailPageView = ({
           },
         });
 
-        const createPromise = triggerChatCompletionMutation.mutateAsync({
+        dispatchConversationItems({
+          action: "add",
+          newItem: {
+            id: aiAssistantId,
+            content: "",
+            role: "assistant",
+            userId: user?.id ?? "",
+            conversationId: chatId,
+            isStreaming: true,
+            attachments: [],
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        });
+
+        const createPromise = sendMessageMutation.mutateAsync({
           newChatId: id,
+          aiAssistantId,
           conversationId: chatId,
           apiKey: data.apiKey,
           newChatContent: data.newChatContent,
@@ -109,7 +143,7 @@ export const ChatDetailPageView = ({
         const syncPromise = matchStream(
           conversationItemsShape.stream,
           ["insert"],
-          matchBy("id", id),
+          matchBy("id", [id, aiAssistantId]),
         );
 
         await Promise.all([createPromise, syncPromise]);
@@ -118,11 +152,13 @@ export const ChatDetailPageView = ({
       form.resetField("newChatContent");
       attatchmentFilesFieldArray.replace([]);
     },
-    (err) => {
+    (error) => {
+      console.error(error);
+
       let firstError = "Unknown error";
 
-      for (const error of Object.values(err)) {
-        firstError = error.message ?? firstError;
+      for (const err of Object.values(error)) {
+        firstError = err.message ?? firstError;
         break;
       }
 
@@ -130,6 +166,23 @@ export const ChatDetailPageView = ({
         description: firstError,
       });
     },
+  );
+
+  React.useEffect(
+    function listenCmdEnter() {
+      const handleCmdEnter = (e: KeyboardEvent) => {
+        if (e.key === "Enter" && e.metaKey) {
+          void onSubmit();
+        }
+      };
+
+      window.addEventListener("keydown", handleCmdEnter);
+
+      return () => {
+        window.removeEventListener("keydown", handleCmdEnter);
+      };
+    },
+    [onSubmit],
   );
 
   return (

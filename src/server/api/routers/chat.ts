@@ -6,7 +6,6 @@ import {
   wrapLanguageModel,
 } from "ai";
 import throttle from "lodash/throttle";
-import { ulid } from "ulid";
 import { z } from "zod";
 import {
   attachmentFileSchema,
@@ -52,9 +51,9 @@ export const chatRouter = createTRPCRouter({
       })();
 
       const aiConversationItem = await ctx.db.conversationItem.create({
-        select: { id: true },
+        select: { id: true, content: true, attachments: true },
         data: {
-          id: ulid(),
+          id: input.aiAssistantId,
           content: "",
           role: "assistant",
           userId: ctx.session.user.id,
@@ -82,7 +81,7 @@ export const chatRouter = createTRPCRouter({
             userId: ctx.session.user.id,
           },
           orderBy: {
-            id: "asc",
+            createdAt: "asc",
           },
         });
 
@@ -170,7 +169,7 @@ export const chatRouter = createTRPCRouter({
               You are a helpful assistant that generates a title for a conversation.
               The beginning message is: ${input.newChatContent}
               The title must be no more than 3 words.
-              Your response must be a single sentence that captures the essence of the conversation and nothing else.
+              Your response must be the title directly without any unnecessary words.
             `.trim(),
             });
 
