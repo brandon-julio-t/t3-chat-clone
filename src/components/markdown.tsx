@@ -44,7 +44,7 @@ const Markdown = React.memo<MarkdownProps>(({ content }) => {
           <Button
             variant="link"
             asChild
-            className="h-auto p-0 whitespace-pre-wrap"
+            className={cn("h-auto p-0 whitespace-pre-wrap", className)}
             size="sm"
           >
             <Link href={href ?? "#"} {...props} />
