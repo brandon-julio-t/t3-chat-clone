@@ -18,11 +18,12 @@ import {
 import { Textarea } from "~/components/ui/textarea";
 import { api, getBaseUrl } from "~/trpc/react";
 import { ChatItem } from "./chat-item";
-import { sendMessageSchema } from "~/app/domains/chat";
+import { sendMessageSchema } from "~/app/domains/chat/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InputAttachment } from "./input-attachment";
 import { FileIcon, XIcon } from "lucide-react";
 import { toast } from "sonner";
+import { ModelSelector } from "./model-selector";
 
 export const ChatDetailPageView = ({
   chatId,
@@ -192,6 +193,8 @@ export const ChatDetailPageView = ({
             />
 
             <div className="flex items-center gap-2">
+              <ModelSelector initialModel={initialModel} />
+
               <InputAttachment
                 setAttachmentFiles={attatchmentFilesFieldArray.append}
               />

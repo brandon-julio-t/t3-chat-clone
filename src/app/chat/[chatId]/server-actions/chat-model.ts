@@ -2,17 +2,16 @@
 
 import { cookies } from "next/headers";
 import { getSession } from "~/lib/auth";
-
-const DEFAULT_MODEL = "meta-llama/llama-4-maverick:free";
+import { DEFAULT_AI_MODEL } from "~/app/domains/chat/constants";
 
 export const getChatModel = async () => {
   const session = await getSession();
   if (!session?.user) {
-    return DEFAULT_MODEL;
+    return DEFAULT_AI_MODEL;
   }
 
   const cookieStore = await cookies();
-  const model = cookieStore.get("model")?.value ?? DEFAULT_MODEL;
+  const model = cookieStore.get("model")?.value ?? DEFAULT_AI_MODEL;
   return model;
 };
 
