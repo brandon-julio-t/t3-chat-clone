@@ -1,11 +1,13 @@
 "use client";
 
+import { matchBy, matchStream } from "@electric-sql/experimental";
 import { useShape } from "@electric-sql/react";
 import type { ConversationItem } from "@prisma/client";
 import type { User } from "better-auth";
+import React from "react";
 import { useForm } from "react-hook-form";
+import { ulid } from "ulid";
 import { Button } from "~/components/ui/button";
-import { matchBy, matchStream } from "@electric-sql/experimental";
 import {
   Form,
   FormControl,
@@ -13,22 +15,22 @@ import {
   FormItem,
   FormMessage,
 } from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
+import { Textarea } from "~/components/ui/textarea";
 import { api, getBaseUrl } from "~/trpc/react";
 import { ChatItem } from "./chat-item";
-import React from "react";
-import { ulid } from "ulid";
+import { sendMessageSchema } from "~/app/domains/chat";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export const ChatDetailPageView = ({
   chatId,
   user,
   initialModel,
-  initialApiKey,
+  apiKey,
 }: {
   chatId: string;
   user: User | null;
   initialModel: string;
-  initialApiKey: string;
+  apiKey: string;
 }) => {
   const conversationItemsShape = useShape<ConversationItem>({
     url: `${getBaseUrl()}/api/electric-sql`,
@@ -53,15 +55,17 @@ export const ChatDetailPageView = ({
   });
 
   const form = useForm({
+    resolver: zodResolver(sendMessageSchema),
     defaultValues: {
-      apiKey: initialApiKey ?? "",
-      model: initialModel,
-      content: "",
+      apiKey,
+      chatModel: initialModel,
+      conversationId: chatId,
+      newChatId: ulid(),
+      newChatContent: "",
     },
   });
 
-  const triggerChatCompletionMutation =
-    api.post.triggerChatCompletion.useMutation();
+  const triggerChatCompletionMutation = api.chat.sendMessage.useMutation();
 
   const onSubmit = form.handleSubmit(async (data) => {
     const id = ulid();
@@ -71,7 +75,7 @@ export const ChatDetailPageView = ({
         action: "add",
         newItem: {
           id,
-          content: data.content,
+          content: data.newChatContent,
           role: "user",
           userId: user?.id ?? "",
           conversationId: chatId,
@@ -82,11 +86,11 @@ export const ChatDetailPageView = ({
       });
 
       const createPromise = triggerChatCompletionMutation.mutateAsync({
-        id,
-        chatId,
+        newChatId: id,
+        conversationId: chatId,
         apiKey: data.apiKey,
-        content: data.content,
-        model: data.model,
+        newChatContent: data.newChatContent,
+        chatModel: data.chatModel,
       });
 
       const syncPromise = matchStream(
@@ -98,12 +102,12 @@ export const ChatDetailPageView = ({
       await Promise.all([createPromise, syncPromise]);
     });
 
-    form.resetField("content");
+    form.resetField("newChatContent");
   });
 
   return (
-    <main className="relative container mx-auto flex h-screen max-w-4xl flex-col gap-6 px-4 py-6">
-      <section>
+    <main className="relative container mx-auto flex min-h-svh max-w-4xl flex-col px-4">
+      <section className="flex-1">
         <div className="flex flex-col gap-4 p-4">
           {conversationItems.map((conversationItem) => (
             <div key={conversationItem.id}>
@@ -118,13 +122,13 @@ export const ChatDetailPageView = ({
           <form onSubmit={onSubmit} className="flex flex-col gap-4">
             <FormField
               control={form.control}
-              name="content"
+              name="newChatContent"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input
+                    <Textarea
                       {...field}
-                      type="text"
+                      className="resize-none border-none shadow-none dark:bg-transparent"
                       placeholder="Type your message..."
                     />
                   </FormControl>
@@ -134,19 +138,6 @@ export const ChatDetailPageView = ({
             />
 
             <div className="flex items-center gap-4">
-              <FormField
-                control={form.control}
-                name="apiKey"
-                render={({ field }) => (
-                  <FormItem className="flex-1">
-                    <FormControl>
-                      <Input {...field} type="password" placeholder="API Key" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <Button type="submit">Send</Button>
             </div>
           </form>

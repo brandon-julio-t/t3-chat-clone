@@ -1,44 +1,21 @@
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
+import { streamText } from "ai";
 import throttle from "lodash/throttle";
 import { ulid } from "ulid";
-import { z } from "zod";
-import { streamText } from "ai";
-import { createOpenRouter } from "@openrouter/ai-sdk-provider";
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "~/server/api/trpc";
+import { sendMessageSchema } from "~/app/domains/chat";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
-export const postRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
-    }),
-
-  getSecretMessage: protectedProcedure.query(() => {
-    return "you can now see this secret message!";
-  }),
-
-  triggerChatCompletion: protectedProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        content: z.string(),
-        chatId: z.string(),
-        apiKey: z.string(),
-        model: z.string(),
-      }),
-    )
+export const chatRouter = createTRPCRouter({
+  sendMessage: protectedProcedure
+    .input(sendMessageSchema)
     .mutation(async ({ input, ctx }) => {
-      const { id, chatId, apiKey, content, model } = input;
+      const { apiKey, chatModel, conversationId, newChatId, newChatContent } =
+        input;
 
       await ctx.db.conversationItem.create({
         data: {
-          id,
-          content,
+          id: newChatId,
+          content: newChatContent,
           role: "user",
           user: {
             connect: {
@@ -48,10 +25,10 @@ export const postRouter = createTRPCRouter({
           conversation: {
             connectOrCreate: {
               where: {
-                id: chatId,
+                id: conversationId,
               },
               create: {
-                id: chatId,
+                id: conversationId,
                 user: {
                   connect: {
                     id: ctx.session.user.id,
@@ -78,10 +55,10 @@ export const postRouter = createTRPCRouter({
           conversation: {
             connectOrCreate: {
               where: {
-                id: chatId,
+                id: conversationId,
               },
               create: {
-                id: chatId,
+                id: conversationId,
                 user: {
                   connect: {
                     id: ctx.session.user.id,
@@ -97,7 +74,7 @@ export const postRouter = createTRPCRouter({
 
       const history = await ctx.db.conversationItem.findMany({
         where: {
-          conversationId: chatId,
+          conversationId: conversationId,
           userId: ctx.session.user.id,
         },
       });
@@ -120,7 +97,7 @@ export const postRouter = createTRPCRouter({
       }, 150);
 
       const stream = streamText({
-        model: openrouter(model),
+        model: openrouter(chatModel),
 
         messages: history.map((item) => ({
           role: item.role as "user" | "assistant",
