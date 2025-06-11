@@ -12,6 +12,7 @@ export async function GET(req: Request) {
 
   // Construct the origin URL.
   const originUrl = new URL(env.ELECTRIC_SQL_BACKEND_URL);
+
   proxyUrl.searchParams.forEach((value, key) => {
     if (key === "where") {
       originUrl.searchParams.set(
@@ -22,6 +23,10 @@ export async function GET(req: Request) {
       originUrl.searchParams.set(key, value);
     }
   });
+
+  if (!originUrl.searchParams.has("where")) {
+    originUrl.searchParams.set("where", `"userId" = '${auth.user.id}'`);
+  }
 
   // Add the source params.
   originUrl.searchParams.set(`source_id`, env.ELECTRIC_SQL_SOURCE_ID);
