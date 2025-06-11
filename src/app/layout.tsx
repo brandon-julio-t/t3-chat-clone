@@ -3,11 +3,11 @@ import "~/styles/globals.css";
 import { type Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
-import { TRPCReactProvider } from "~/trpc/react";
-import { getSession } from "~/lib/auth";
-import AutoSigninAnon from "./_components/auto-signin-anon";
-import { Toaster } from "~/components/ui/sonner";
 import { ThemeProvider } from "~/components/theme-provider";
+import { Toaster } from "~/components/ui/sonner";
+import { getSession } from "~/lib/auth";
+import { TRPCReactProvider } from "~/trpc/react";
+import AutoSigninAnon from "./_components/auto-signin-anon";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
