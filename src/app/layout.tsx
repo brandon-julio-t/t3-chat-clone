@@ -1,12 +1,13 @@
 import "~/styles/globals.css";
 
 import { type Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import { getSession } from "~/lib/auth";
 import AutoSigninAnon from "./_components/auto-signin-anon";
 import { Toaster } from "~/components/ui/sonner";
+import { ThemeProvider } from "~/components/theme-provider";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -19,20 +20,36 @@ const geist = Geist({
   variable: "--font-geist-sans",
 });
 
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+});
+
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const session = await getSession();
 
   return (
-    <html lang="en" className={`${geist.variable}`}>
+    <html
+      lang="en"
+      className={`${geist.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
+    >
       <body>
         <TRPCReactProvider>
-          <Toaster richColors />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Toaster richColors />
 
-          <AutoSigninAnon user={session?.user} />
+            <AutoSigninAnon user={session?.user} />
 
-          {children}
+            {children}
+          </ThemeProvider>
         </TRPCReactProvider>
       </body>
     </html>
