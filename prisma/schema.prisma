@@ -99,5 +99,5 @@ model ConversationItem {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
-  @@index([id, userId, conversationId])
+  @@index([userId, conversationId, createdAt])
 }
