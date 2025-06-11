@@ -7,7 +7,8 @@ import { authClient } from "~/lib/auth-client";
 
 const AutoSigninAnon: React.ComponentType<{
   user: User | null | undefined;
-}> = ({ user }) => {
+  children: React.ReactNode;
+}> = ({ user, children }) => {
   const router = useRouter();
 
   React.useEffect(() => {
@@ -20,7 +21,11 @@ const AutoSigninAnon: React.ComponentType<{
     });
   }, [router, user]);
 
-  return null;
+  if (!user) {
+    return null;
+  }
+
+  return children;
 };
 
 export default AutoSigninAnon;

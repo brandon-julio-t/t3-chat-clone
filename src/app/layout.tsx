@@ -46,9 +46,7 @@ export default async function RootLayout({
           >
             <Toaster richColors />
 
-            <AutoSigninAnon user={session?.user} />
-
-            {children}
+            <AutoSigninAnon user={session?.user}>{children}</AutoSigninAnon>
           </ThemeProvider>
         </TRPCReactProvider>
       </body>
