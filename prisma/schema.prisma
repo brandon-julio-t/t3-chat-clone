@@ -11,17 +11,18 @@ datasource db {
 }
 
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
-  sessions      Session[]
-  accounts      Account[]
-
-  isAnonymous Boolean?
+  id                String             @id
+  name              String
+  email             String
+  emailVerified     Boolean
+  image             String?
+  createdAt         DateTime
+  updatedAt         DateTime
+  sessions          Session[]
+  accounts          Account[]
+  isAnonymous       Boolean?
+  conversations     Conversation[]
+  conversationItems ConversationItem[]
 
   @@unique([email])
   @@map("user")
@@ -70,4 +71,27 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+model Conversation {
+  id        String             @id
+  title     String
+  userId    String
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  messages  ConversationItem[]
+}
+
+model ConversationItem {
+  id             String       @id
+  content        String
+  role           String
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  isStreaming    Boolean
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
