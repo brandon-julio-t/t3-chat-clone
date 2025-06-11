@@ -13,7 +13,14 @@ export async function GET(req: Request) {
   // Construct the origin URL.
   const originUrl = new URL(env.ELECTRIC_SQL_BACKEND_URL);
   proxyUrl.searchParams.forEach((value, key) => {
-    originUrl.searchParams.set(key, value);
+    if (key === "where") {
+      originUrl.searchParams.set(
+        key,
+        `${value} and "userId" = '${auth.user.id}'`,
+      );
+    } else {
+      originUrl.searchParams.set(key, value);
+    }
   });
 
   // Add the source params.

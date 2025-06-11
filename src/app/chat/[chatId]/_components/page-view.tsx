@@ -34,8 +34,8 @@ export const ChatDetailPageView = ({
     url: `${getBaseUrl()}/api/electric-sql`,
     params: {
       table: `"ConversationItem"`,
-      where: `"conversationId" = $1 and "userId" = $2`,
-      params: [chatId, user?.id ?? ""],
+      where: `"conversationId" = $1`,
+      params: [chatId],
     },
   });
 
