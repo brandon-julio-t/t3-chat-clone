@@ -4,7 +4,6 @@ import type { ReactNode } from "react";
 import React from "react";
 import { type Element, isInlineCode, useShikiHighlighter } from "react-shiki";
 
-import { toast } from "sonner";
 import { Button } from "./ui/button";
 
 interface CodeHighlightProps {
@@ -112,26 +111,3 @@ const VARIANTS = {
     filter: "blur(2px)",
   },
 };
-
-/** @see `libs/ui/src/hooks/clipboard.ts` */
-function useClipboard() {
-  const copyText = React.useCallback(
-    async (
-      text: string,
-      fallbackPromptMessage = "Error when doing copy, you can copy the following text",
-    ) => {
-      try {
-        await navigator.clipboard.writeText(text);
-        toast.success("Copied to clipboard");
-      } catch {
-        // somehow there's an error with writing to clipboard
-        // could be permission, old browser/system, etc.
-        // fallback to using prompt and manual copy-paste
-        prompt(fallbackPromptMessage, text);
-      }
-    },
-    [],
-  );
-
-  return { copyText };
-}
