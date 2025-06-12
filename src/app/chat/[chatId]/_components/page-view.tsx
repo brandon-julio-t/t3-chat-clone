@@ -60,10 +60,16 @@ export const ChatDetailPageView = ({
 
   const conversationItems = React.useMemo(
     () =>
-      _conversationItems.sort(
-        (a, b) =>
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-      ),
+      _conversationItems.toSorted((a, b) => {
+        const sortByCreatedAt =
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+
+        if (sortByCreatedAt === 0) {
+          return a.id.localeCompare(b.id);
+        }
+
+        return sortByCreatedAt;
+      }),
     [_conversationItems],
   );
 
