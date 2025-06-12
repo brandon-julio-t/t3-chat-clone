@@ -48,7 +48,17 @@ export const ModelSelector = ({
           <CommandInput placeholder="Search model..." />
           <CommandList>
             <CommandEmpty>No model found.</CommandEmpty>
-            {AI_MODELS.map((model) => {
+            {AI_MODELS.toSorted((a, b) => {
+              if (a.value === modelId) {
+                return -1;
+              }
+
+              if (b.value === modelId) {
+                return 1;
+              }
+
+              return 0;
+            }).map((model) => {
               const isSelected = model.value === modelId;
 
               const iconKey =
