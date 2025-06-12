@@ -4,37 +4,63 @@ Challenge accepted: https://cloneathon.t3.chat
 
 ## Core Requirements (Required)
 
-- [x] Chat with Various LLMs
-  - Implement support for multiple language models and providers
-- [x] Authentication & Sync
-  - User authentication with chat history synchronization
-- [ ] Browser Friendly
-  - Ensure web-based functionality without native app requirements
-- [x] Easy to Try
-  - Provide simple way for users to test the application
+- [x] Chat with Various LLMs: Implement support for multiple language models and providers
+
+> ✅ OpenRouter
+
+- [x] Authentication & Sync: User authentication with chat history synchronization
+
+> ✅ Better Auth + anonymous plugin
+
+- [x] Browser Friendly: Ensure web-based functionality without native app requirements
+
+> ✅ tailwindcss + shadcn/ui
+
+- [x] Easy to Try: Provide simple way for users to test the application
+
+> ✅ https://t3-chat-clone-sigma.vercel.app/
 
 ## Bonus Features
 
-- [x] Attachment Support
-  - Allow users to upload files (images and pdfs)
-- [ ] Image Generation Support
-  - Add AI-powered image generation capabilities
-- [x] Syntax Highlighting
-  - Implement beautiful code formatting and highlighting
-- [x] Resumable Streams
-  - Enable continuing generation after page refresh
-- [ ] Chat Branching
-  - Create alternative conversation paths
-- [ ] Chat Sharing
-  - Allow sharing conversations with others
-- [ ] Web Search
-  - Integrate real-time web search functionality
-- [x] Bring Your Own Key
-  - Support for custom API keys
-- [ ] Mobile App
-  - Develop mobile version alongside web app
-- [ ] Custom Features
-  - Add your own unique and creative features
+- [x] Attachment Support: Allow users to upload files (images and pdfs)
+
+> ✅ OpenRouter
+
+- [ ] Image Generation Support: Add AI-powered image generation capabilities
+
+> 🚧 WIP, Thinking...
+
+- [x] Syntax Highlighting: Implement beautiful code formatting and highlighting
+
+> ✅ React Shiki
+
+- [x] Resumable Streams: Enable continuing generation after page refresh
+
+> ✅ Electric SQL
+
+- [ ] Chat Branching: Create alternative conversation paths
+
+> 🚧 WIP, Thinking...
+
+- [ ] Chat Sharing: Allow sharing conversations with others
+
+> 🚧 WIP, Thinking...
+
+- [ ] Web Search: Integrate real-time web search functionality
+
+> 🚧 WIP, Thinking...
+
+- [x] Bring Your Own Key: Support for custom API keys
+
+> ✅ OpenRouter + Next.js cookie
+
+- [ ] Mobile App: Develop mobile version alongside web app
+
+> 🚧 WIP, Thinking...
+
+- [ ] Custom Features: Add your own unique and creative features
+
+> 🚧 WIP, Thinking...
 
 ---
 
