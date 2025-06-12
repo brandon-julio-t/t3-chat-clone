@@ -26,7 +26,7 @@ export const CodeHighlight = React.memo(
     const highlightedCode = useShikiHighlighter(
       code,
       language,
-      theme === "dark" ? "github-dark" : "github-light",
+      theme === "dark" ? "vesper" : "vitesse-light",
     );
 
     const [state, setState] = React.useState<"idle" | "copy-success">("idle");
