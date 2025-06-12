@@ -10,7 +10,7 @@ Challenge accepted: https://cloneathon.t3.chat
 
 - [x] Authentication & Sync: User authentication with chat history synchronization
 
-> ✅ Better Auth + anonymous plugin
+> ✅ Better-Auth + anonymous plugin
 
 - [x] Browser Friendly: Ensure web-based functionality without native app requirements
 
@@ -26,9 +26,9 @@ Challenge accepted: https://cloneathon.t3.chat
 
 > ✅ OpenRouter
 
-- [ ] Image Generation Support: Add AI-powered image generation capabilities
+- [x] Image Generation Support: Add AI-powered image generation capabilities
 
-> 🚧 WIP, Thinking...
+> ✅ LangDB
 
 - [x] Syntax Highlighting: Implement beautiful code formatting and highlighting
 
