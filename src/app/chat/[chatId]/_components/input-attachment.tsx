@@ -8,10 +8,12 @@ import type { sendMessageSchema } from "~/domains/chat/schemas";
 
 export const InputAttachment = ({
   setAttachmentFiles,
+  modelModalities,
 }: {
   setAttachmentFiles: (
     files: z.infer<typeof sendMessageSchema>["attachmentFiles"],
   ) => void;
+  modelModalities: Array<"text" | "file" | "image">;
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const inputFileRef = React.useRef<HTMLInputElement>(null);
@@ -36,6 +38,20 @@ export const InputAttachment = ({
     setIsLoading(false);
   };
 
+  const acceptedMimeType = React.useMemo(() => {
+    let accept = "";
+
+    if (modelModalities.includes("image")) {
+      accept += "image/*,";
+    }
+
+    if (modelModalities.includes("file")) {
+      accept += "application/pdf";
+    }
+
+    return accept;
+  }, [modelModalities]);
+
   return (
     <>
       <Button
@@ -52,7 +68,7 @@ export const InputAttachment = ({
 
       <input
         type="file"
-        accept="image/*,application/pdf"
+        accept={acceptedMimeType}
         multiple
         className="hidden"
         ref={inputFileRef}

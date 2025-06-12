@@ -1,12 +1,6 @@
+import { ChevronDownIcon, FileIcon, ImageIcon, TextIcon } from "lucide-react";
 import React from "react";
 import { Button } from "~/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "~/components/ui/popover";
-import { saveChatModel } from "../server-actions/chat-model";
-import { AI_MODELS } from "~/domains/chat/constants";
 import {
   Command,
   CommandEmpty,
@@ -14,24 +8,31 @@ import {
   CommandItem,
   CommandList,
 } from "~/components/ui/command";
-import { CheckIcon, ChevronDownIcon } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
+import { AI_MODELS } from "~/domains/chat/constants";
 import { cn } from "~/lib/utils";
 
-export const ModelSelector = ({ initialModel }: { initialModel: string }) => {
-  const [modelId, _setModelId] = React.useState(initialModel);
-  const setModelId = React.useCallback((value: string) => {
-    _setModelId(value);
-    void saveChatModel(value);
-  }, []);
+export const ModelSelector = ({
+  modelId,
+  setModelId,
+}: {
+  modelId: string;
+  setModelId: (value: string) => void;
+}) => {
+  const [open, setOpen] = React.useState(false);
 
   const selectedModel = React.useMemo(() => {
     return AI_MODELS.find((model) => model.value === modelId);
   }, [modelId]);
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="secondary" className="group">
+        <Button variant="secondary" className="group w-fit grow-0">
           <span>{selectedModel?.label}</span>
           <ChevronDownIcon className="transition-transform group-data-[state=open]:rotate-180" />
         </Button>
@@ -52,7 +53,11 @@ export const ModelSelector = ({ initialModel }: { initialModel: string }) => {
                 <CommandItem
                   key={model.value}
                   value={model.value}
-                  onSelect={() => setModelId(model.value)}
+                  className={cn(isSelected ? "bg-accent" : "")}
+                  onSelect={() => {
+                    setModelId(model.value);
+                    setOpen(false);
+                  }}
                 >
                   <div
                     className="size-4 rounded-full bg-cover bg-center"
@@ -63,14 +68,26 @@ export const ModelSelector = ({ initialModel }: { initialModel: string }) => {
                     }}
                   />
 
-                  <span>{model.label}</span>
-                  <CheckIcon
-                    className={cn(
-                      "ml-auto",
-                      isSelected && "visible",
-                      !isSelected && "invisible",
-                    )}
-                  />
+                  <span className="mr-auto">{model.label}</span>
+
+                  {model.modalities.map((modality, index) => {
+                    switch (modality) {
+                      case "text":
+                        return (
+                          <TextIcon className="text-neutral-500" key={index} />
+                        );
+                      case "file":
+                        return (
+                          <FileIcon className="text-emerald-500" key={index} />
+                        );
+                      case "image":
+                        return (
+                          <ImageIcon className="text-blue-500" key={index} />
+                        );
+                      default:
+                        return null;
+                    }
+                  })}
                 </CommandItem>
               );
             })}
