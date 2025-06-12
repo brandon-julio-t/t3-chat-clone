@@ -1,4 +1,10 @@
-import { ChevronDownIcon, FileIcon, ImageIcon, TextIcon } from "lucide-react";
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  FileIcon,
+  ImageIcon,
+  TextIcon,
+} from "lucide-react";
 import React from "react";
 import { Button } from "~/components/ui/button";
 import {
@@ -53,12 +59,15 @@ export const ModelSelector = ({
                 <CommandItem
                   key={model.value}
                   value={model.value}
-                  className={cn(isSelected ? "bg-accent" : "")}
                   onSelect={() => {
                     setModelId(model.value);
                     setOpen(false);
                   }}
                 >
+                  <CheckIcon
+                    className={cn(isSelected ? "visible" : "invisible")}
+                  />
+
                   <div
                     className="size-4 rounded-full bg-cover bg-center"
                     style={{
