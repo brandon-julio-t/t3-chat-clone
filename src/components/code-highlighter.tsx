@@ -33,7 +33,7 @@ export const CodeHighlight = React.memo(
     const timeoutRef = React.useRef<number>(-1);
 
     return !isInline ? (
-      <div className="overflow-hidden rounded-lg border">
+      <div className="overflow-hidden rounded-lg">
         <div className="bg-muted flex items-center justify-between p-1">
           {language && (
             <span className="mx-3 text-xs tracking-tighter">{language}</span>
