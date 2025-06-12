@@ -20,5 +20,9 @@ export const saveChatApiKey = async (apiKey: string) => {
   }
 
   const cookieStore = await cookies();
-  cookieStore.set("apiKey", apiKey);
+
+  cookieStore.set("apiKey", apiKey, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+  });
 };
