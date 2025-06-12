@@ -14,7 +14,31 @@ export const auth = betterAuth({
     enabled: true,
   },
 
-  plugins: [anonymous()],
+  plugins: [
+    anonymous({
+      onLinkAccount: async ({ anonymousUser, newUser }) => {
+        await db.$transaction([
+          db.conversationItem.updateMany({
+            where: {
+              userId: anonymousUser.user.id,
+            },
+            data: {
+              userId: newUser.user.id,
+            },
+          }),
+
+          db.conversation.updateMany({
+            where: {
+              userId: anonymousUser.user.id,
+            },
+            data: {
+              userId: newUser.user.id,
+            },
+          }),
+        ]);
+      },
+    }),
+  ],
 });
 
 export const getSession = React.cache(async () => {
