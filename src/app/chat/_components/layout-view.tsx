@@ -11,7 +11,7 @@ import {
   UserPlusIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { ModeToggle } from "~/components/mode-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
@@ -63,6 +63,7 @@ export const ChatLayoutView = ({
 }) => {
   const isMobile = useIsMobile();
   const router = useRouter();
+  const pathname = usePathname();
 
   const conversationsShape = useElectricShape<Conversation>({
     params: {
@@ -110,15 +111,19 @@ export const ChatLayoutView = ({
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-                {conversations.map((conversation) => (
+                {conversations.map((conversation) => {
+                  const isActive = pathname === `/chat/${conversation.id}`;
+
+                  return (
                   <SidebarMenuItem key={conversation.id}>
-                    <SidebarMenuButton asChild>
-                      <Link href={`/chat/${conversation.id}`}>
+                      <SidebarMenuButton isActive={isActive} asChild>
+                        <Link href={`/chat/${conversation.id}`} prefetch={true}>
                         <span>{conversation.title}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                ))}
+                  );
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
