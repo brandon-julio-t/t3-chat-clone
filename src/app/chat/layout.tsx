@@ -1,14 +1,16 @@
 import { getSession } from "~/lib/auth";
-import { ChatLayoutView } from "./_components/layout-view";
 import {
   getChatApiKey,
   getImageApiKey,
 } from "./[chatId]/server-actions/chat-api-key";
+import { ChatLayoutView } from "./_components/layout-view";
 
 const ChatLayout = async ({ children }: { children: React.ReactNode }) => {
-  const session = await getSession();
-  const chatApiKey = await getChatApiKey();
-  const imageApiKey = await getImageApiKey();
+  const [session, chatApiKey, imageApiKey] = await Promise.all([
+    getSession(),
+    getChatApiKey(),
+    getImageApiKey(),
+  ]);
 
   return (
     <ChatLayoutView
