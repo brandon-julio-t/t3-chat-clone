@@ -96,12 +96,12 @@ export const ChatLayoutView = ({
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     size="lg"
-                    variant="outline"
-                    className="justify-center border"
+                    variant="primary"
+                    className="justify-center"
                     asChild
                   >
                     <Link href="/chat">
-                      <PlusIcon />
+                      <PlusIcon className="-ml-4" />
                       <span>New Chat</span>
                     </Link>
                   </SidebarMenuButton>
