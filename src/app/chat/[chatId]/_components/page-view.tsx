@@ -32,6 +32,8 @@ import { ChatItem } from "./chat-item";
 import { InputAttachment } from "./input-attachment";
 import { ModelSelector } from "./model-selector";
 import { AI_MODELS } from "~/domains/chat/constants";
+import { SidebarTrigger } from "~/components/ui/sidebar";
+import { ModeToggle } from "~/components/mode-toggle";
 
 export const ChatDetailPageView = ({
   chatId,
@@ -207,8 +209,8 @@ export const ChatDetailPageView = ({
   );
 
   return (
-    <main className="relative container mx-auto flex min-h-svh max-w-4xl flex-col px-4">
-      <section className="flex-1">
+    <main className="relative container mx-auto flex min-h-svh max-w-4xl flex-col">
+      <section className="flex-1 px-4">
         {conversationItems.length > 0 ? (
           <div className="flex flex-col gap-4 p-4">
             {conversationItems.map((conversationItem) => (
@@ -248,76 +250,78 @@ export const ChatDetailPageView = ({
         )}
       </section>
 
-      {attatchmentFilesFieldArray.fields.length > 0 && (
-        <section className="flex flex-row gap-4 overflow-x-auto py-4">
-          {attatchmentFilesFieldArray.fields.map((field, index) => (
-            <div key={field.id} className="group relative shrink-0">
-              <Button
-                variant="secondary"
-                size="icon"
-                className="absolute top-0 right-0 flex size-6 translate-x-1/2 -translate-y-1/2 rounded-full group-hover:flex"
-                onClick={() => {
-                  attatchmentFilesFieldArray.remove(index);
-                }}
-              >
-                <XIcon />
-              </Button>
+      <section className="sticky right-0 bottom-0 left-0 px-2">
+        {attatchmentFilesFieldArray.fields.length > 0 && (
+          <div className="flex flex-row gap-4 overflow-x-auto py-4">
+            {attatchmentFilesFieldArray.fields.map((field, index) => (
+              <div key={field.id} className="group relative shrink-0">
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="absolute top-0 right-0 flex size-6 translate-x-1/2 -translate-y-1/2 rounded-full group-hover:flex"
+                  onClick={() => {
+                    attatchmentFilesFieldArray.remove(index);
+                  }}
+                >
+                  <XIcon />
+                </Button>
 
-              {field.contentType.startsWith("image/") ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={field.url}
-                  className="size-12 overflow-hidden rounded-md"
-                  alt="Attachment"
-                />
-              ) : (
-                <FileIcon className="size-12 overflow-hidden rounded-md" />
-              )}
-            </div>
-          ))}
-        </section>
-      )}
+                {field.contentType.startsWith("image/") ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={field.url}
+                    className="size-12 overflow-hidden rounded-md"
+                    alt="Attachment"
+                  />
+                ) : (
+                  <FileIcon className="size-12 overflow-hidden rounded-md" />
+                )}
+              </div>
+            ))}
+          </div>
+        )}
 
-      <section className="sticky right-0 bottom-0 left-0 rounded-t-lg border p-4 backdrop-blur-2xl">
-        <Form {...form}>
-          <form onSubmit={onSubmit} className="flex flex-col gap-4">
-            <FormField
-              control={form.control}
-              name="newChatContent"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      className="resize-none rounded-none border-none p-0 shadow-none focus-visible:ring-0 dark:bg-transparent"
-                      placeholder="Type your message..."
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="flex items-center gap-2">
-              <ModelSelector modelId={modelId} setModelId={setModelId} />
-
-              <InputAttachment
-                setAttachmentFiles={attatchmentFilesFieldArray.append}
-                modelModalities={selectedModel?.modalities ?? []}
+        <div className="rounded-t-lg border p-4 backdrop-blur-2xl">
+          <Form {...form}>
+            <form onSubmit={onSubmit} className="flex flex-col gap-4">
+              <FormField
+                control={form.control}
+                name="newChatContent"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        className="resize-none rounded-none border-none p-0 shadow-none focus-visible:ring-0 dark:bg-transparent"
+                        placeholder="Type your message..."
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
 
-              <div className="flex-1" />
+              <div className="flex items-center gap-2">
+                <ModelSelector modelId={modelId} setModelId={setModelId} />
 
-              <Button type="submit" className="gap-0">
-                <SendIcon className="sm:hidden" />
+                <InputAttachment
+                  setAttachmentFiles={attatchmentFilesFieldArray.append}
+                  modelModalities={selectedModel?.modalities ?? []}
+                />
 
-                <span className="hidden sm:block">Send</span>
-                <CommandIcon className="mr-1 ml-2 hidden size-(--text-xs) sm:block" />
-                <CornerDownLeftIcon className="hidden size-(--text-xs) sm:block" />
-              </Button>
-            </div>
-          </form>
-        </Form>
+                <div className="flex-1" />
+
+                <Button type="submit" className="gap-0">
+                  <SendIcon className="sm:hidden" />
+
+                  <span className="hidden sm:block">Send</span>
+                  <CommandIcon className="mr-1 ml-2 hidden size-(--text-xs) sm:block" />
+                  <CornerDownLeftIcon className="hidden size-(--text-xs) sm:block" />
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </div>
       </section>
     </main>
   );

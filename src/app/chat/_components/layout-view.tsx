@@ -12,6 +12,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { ModeToggle } from "~/components/mode-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
   DropdownMenu,
@@ -27,12 +28,14 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarInset,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
+  SidebarTrigger,
 } from "~/components/ui/sidebar";
 import { useElectricShape } from "~/domains/electric-sql/hooks";
 import { useIsMobile } from "~/hooks/use-mobile";
@@ -62,27 +65,36 @@ export const ChatLayoutView = ({
   return (
     <SidebarProvider>
       <Sidebar>
-        <SidebarHeader>{/* ... */}</SidebarHeader>
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton size="lg">
+                <div className="grid flex-1 text-center text-sm leading-tight">
+                  <span className="truncate font-medium">T3 Chat (Clone)</span>
+                </div>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
 
         <SidebarContent>
           <SidebarGroup>
+            <SidebarGroupLabel>Chats</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton
+                    size="lg"
+                    variant="outline"
+                    className="justify-center"
+                    asChild
+                  >
                     <Link href="/chat">
                       <PlusIcon />
                       <span>New Chat</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-
-          <SidebarGroup>
-            <SidebarGroupContent>
-              <SidebarMenu>
                 {conversations.map((conversation) => (
                   <SidebarMenuItem key={conversation.id}>
                     <SidebarMenuButton asChild>
@@ -184,7 +196,18 @@ export const ChatLayoutView = ({
         </SidebarFooter>
       </Sidebar>
 
-      <SidebarInset>{children}</SidebarInset>
+      <SidebarInset className="relative">
+        <section className="sticky top-0 z-10 flex items-center justify-between">
+          <div className="rounded-br-lg p-2 backdrop-blur-2xl">
+            <SidebarTrigger className="size-9" />
+          </div>
+          <div className="rounded-bl-lg p-2 backdrop-blur-2xl">
+            <ModeToggle variant="ghost" />
+          </div>
+        </section>
+
+        {children}
+      </SidebarInset>
     </SidebarProvider>
   );
 };
