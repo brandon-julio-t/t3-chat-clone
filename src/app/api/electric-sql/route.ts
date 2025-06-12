@@ -6,9 +6,6 @@ export async function GET(req: Request) {
 
   // ... validate and authorize the request ...
   const auth = await getSession();
-  if (!auth?.user) {
-    return new Response("Unauthorized", { status: 401 });
-  }
 
   // Construct the origin URL.
   const originUrl = new URL(env.ELECTRIC_SQL_BACKEND_URL);
@@ -17,7 +14,7 @@ export async function GET(req: Request) {
     if (key === "where") {
       originUrl.searchParams.set(
         key,
-        `${value} and "userId" = '${auth.user.id}'`,
+        `${value} and "userId" = '${auth?.user.id}'`,
       );
     } else {
       originUrl.searchParams.set(key, value);
@@ -25,7 +22,7 @@ export async function GET(req: Request) {
   });
 
   if (!originUrl.searchParams.has("where")) {
-    originUrl.searchParams.set("where", `"userId" = '${auth.user.id}'`);
+    originUrl.searchParams.set("where", `"userId" = '${auth?.user.id}'`);
   }
 
   // Add the source params.

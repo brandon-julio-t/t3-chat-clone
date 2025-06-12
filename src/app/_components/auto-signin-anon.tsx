@@ -21,10 +21,6 @@ const AutoSigninAnon: React.ComponentType<{
     });
   }, [router, user]);
 
-  if (!user) {
-    return null;
-  }
-
   return children;
 };
 
