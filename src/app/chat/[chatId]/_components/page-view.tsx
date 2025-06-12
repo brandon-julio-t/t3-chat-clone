@@ -24,6 +24,7 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Textarea } from "~/components/ui/textarea";
+import { AI_MODELS } from "~/domains/chat/constants";
 import { sendMessageSchema } from "~/domains/chat/schemas";
 import { useElectricShape } from "~/domains/electric-sql/hooks";
 import { api } from "~/trpc/react";
@@ -31,9 +32,6 @@ import { saveChatModel } from "../server-actions/chat-model";
 import { ChatItem } from "./chat-item";
 import { InputAttachment } from "./input-attachment";
 import { ModelSelector } from "./model-selector";
-import { AI_MODELS } from "~/domains/chat/constants";
-import { SidebarTrigger } from "~/components/ui/sidebar";
-import { ModeToggle } from "~/components/mode-toggle";
 
 export const ChatDetailPageView = ({
   chatId,
