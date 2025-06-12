@@ -6,7 +6,7 @@ import type { ConversationItem } from "@prisma/client";
 import type { User } from "better-auth";
 import React from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { ulid } from "ulid";
+import { monotonicFactory, ulid } from "ulid";
 import { Button } from "~/components/ui/button";
 import {
   Form,
@@ -59,17 +59,7 @@ export const ChatDetailPageView = ({
   });
 
   const conversationItems = React.useMemo(
-    () =>
-      _conversationItems.toSorted((a, b) => {
-        const sortByCreatedAt =
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-
-        if (sortByCreatedAt === 0) {
-          return a.id.localeCompare(b.id);
-        }
-
-        return sortByCreatedAt;
-      }),
+    () => _conversationItems.toSorted((a, b) => a.id.localeCompare(b.id)),
     [_conversationItems],
   );
 
@@ -100,10 +90,12 @@ export const ChatDetailPageView = ({
     },
   });
 
+  const createUlid = React.useMemo(() => monotonicFactory(), []);
+
   const onSubmit = form.handleSubmit(
     async (data) => {
-      const id = ulid();
-      const aiAssistantId = ulid();
+      const id = createUlid();
+      const aiAssistantId = createUlid();
 
       React.startTransition(async () => {
         dispatchConversationItems({

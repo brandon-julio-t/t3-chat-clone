@@ -80,9 +80,6 @@ export const chatRouter = createTRPCRouter({
             conversationId: input.conversationId,
             userId: ctx.session.user.id,
           },
-          orderBy: {
-            createdAt: "asc",
-          },
         });
 
         let strBuilder = "";
