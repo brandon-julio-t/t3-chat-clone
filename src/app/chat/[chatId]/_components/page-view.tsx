@@ -136,23 +136,29 @@ export const ChatDetailPageView = ({
           },
         });
 
-        const createPromise = sendMessageMutation.mutateAsync({
-          newChatId: id,
-          aiAssistantId,
-          conversationId: chatId,
-          apiKey: data.apiKey,
-          newChatContent: data.newChatContent,
-          chatModel: data.chatModel,
-          attachmentFiles: data.attachmentFiles,
-        });
+        await Promise.all([
+          sendMessageMutation.mutateAsync({
+            newChatId: id,
+            aiAssistantId,
+            conversationId: chatId,
+            apiKey: data.apiKey,
+            newChatContent: data.newChatContent,
+            chatModel: data.chatModel,
+            attachmentFiles: data.attachmentFiles,
+          }),
 
-        const syncPromise = matchStream(
-          conversationItemsShape.stream,
-          ["insert"],
-          matchBy("id", [id, aiAssistantId]),
-        );
+          matchStream(
+            conversationItemsShape.stream,
+            ["insert"],
+            matchBy("id", id),
+          ),
 
-        await Promise.all([createPromise, syncPromise]);
+          matchStream(
+            conversationItemsShape.stream,
+            ["insert"],
+            matchBy("id", aiAssistantId),
+          ),
+        ]);
       });
 
       form.resetField("newChatContent");
