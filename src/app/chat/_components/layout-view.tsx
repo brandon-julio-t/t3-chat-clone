@@ -97,7 +97,7 @@ export const ChatLayoutView = ({
                   <SidebarMenuButton
                     size="lg"
                     variant="outline"
-                    className="justify-center"
+                    className="justify-center border"
                     asChild
                   >
                     <Link href="/chat">
