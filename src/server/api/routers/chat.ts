@@ -168,7 +168,6 @@ export const chatRouter = createTRPCRouter({
                   console.warn(warnings);
                 }
 
-                // in production, save this image to blob storage and return a URL
                 const imageUrls = await Promise.all(
                   images.map(async (image) => {
                     return await put(
@@ -227,15 +226,13 @@ export const chatRouter = createTRPCRouter({
           },
 
           onFinish: async (message) => {
-            const finalMessage = message.text;
-            if (!finalMessage) {
-              return;
-            }
-
             await ctx.db.conversationItem.update({
               select: { id: true },
               where: { id: aiConversationItem.id },
-              data: { content: finalMessage, isStreaming: false },
+              data: {
+                content: message.text || undefined,
+                isStreaming: false,
+              },
             });
           },
 
