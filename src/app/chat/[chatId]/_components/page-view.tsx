@@ -230,15 +230,9 @@ export const ChatDetailPageView = ({
   return (
     <main className="relative container mx-auto flex min-h-svh max-w-4xl flex-col">
       <section className="flex-1 px-4">
-        {conversationItems.length > 0 ? (
-          <div className="flex flex-col gap-4 p-4">
-            {conversationItems.map((conversationItem) => (
-              <div key={conversationItem.id}>
-                <ChatItem conversationItem={conversationItem} />
-              </div>
-            ))}
-          </div>
-        ) : (
+        {conversationItemsShape.isLoading ? (
+          <>{/*  */}</>
+        ) : conversationItems.length <= 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-6 text-center">
             {user?.name && (
               <h2 className="text-2xl font-bold">
@@ -265,6 +259,14 @@ export const ChatDetailPageView = ({
                 </Button>
               ))}
             </div>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4 p-4">
+            {conversationItems.map((conversationItem) => (
+              <div key={conversationItem.id}>
+                <ChatItem conversationItem={conversationItem} />
+              </div>
+            ))}
           </div>
         )}
       </section>
