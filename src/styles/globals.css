@@ -76,8 +76,8 @@
   --radius: 0.625rem;
   --background: var(--color-orange-50);
   --foreground: var(--color-orange-950);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card: var(--color-orange-50);
+  --card-foreground: var(--color-orange-950);
   --popover: var(--color-orange-50);
   --popover-foreground: var(--color-orange-950);
   --primary: var(--color-orange-500);
@@ -108,7 +108,6 @@
 }
 
 .dark {
-  /*    */
   --background: oklch(10% 0.079 36.259);
   --foreground: var(--color-orange-50);
   --card: var(--color-orange-950);
