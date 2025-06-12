@@ -5,6 +5,7 @@ import React from "react";
 import { type Element, isInlineCode, useShikiHighlighter } from "react-shiki";
 
 import { Button } from "./ui/button";
+import { useTheme } from "next-themes";
 
 interface CodeHighlightProps {
   className?: string | undefined;
@@ -14,15 +15,19 @@ interface CodeHighlightProps {
 
 export const CodeHighlight = React.memo(
   ({ className, children, node, ...props }: CodeHighlightProps) => {
+    const { theme } = useTheme();
+
     // eslint-disable-next-line @typescript-eslint/no-base-to-string
     const code = String(children).trim();
     const language = className?.match(/language-(\w+)/)?.[1];
 
     const isInline = node ? isInlineCode(node) : false;
 
-    const highlightedCode = useShikiHighlighter(code, language, "github-dark", {
-      // delay: 150,
-    });
+    const highlightedCode = useShikiHighlighter(
+      code,
+      language,
+      theme === "dark" ? "github-dark" : "github-light",
+    );
 
     const [state, setState] = React.useState<"idle" | "copy-success">("idle");
     const timeoutRef = React.useRef<number>(-1);
