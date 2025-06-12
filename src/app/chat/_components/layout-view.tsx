@@ -115,13 +115,13 @@ export const ChatLayoutView = ({
                   const isActive = pathname === `/chat/${conversation.id}`;
 
                   return (
-                  <SidebarMenuItem key={conversation.id}>
+                    <SidebarMenuItem key={conversation.id}>
                       <SidebarMenuButton isActive={isActive} asChild>
                         <Link href={`/chat/${conversation.id}`} prefetch={true}>
-                        <span>{conversation.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                          <span>{conversation.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
                   );
                 })}
               </SidebarMenu>
@@ -245,10 +245,10 @@ export const ChatLayoutView = ({
 
       <SidebarInset className="relative">
         <section className="sticky top-0 z-10 -mb-14 flex items-center justify-between">
-          <div className="rounded-br-lg p-2 backdrop-blur-2xl">
+          <div className="bg-background/50 rounded-br-lg p-2 backdrop-blur-2xl">
             <SidebarTrigger className="size-9" />
           </div>
-          <div className="rounded-bl-lg p-2 backdrop-blur-2xl">
+          <div className="bg-background/50 rounded-bl-lg p-2 backdrop-blur-2xl">
             <ModeToggle variant="ghost" />
           </div>
         </section>

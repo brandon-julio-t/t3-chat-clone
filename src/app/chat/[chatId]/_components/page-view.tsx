@@ -302,7 +302,7 @@ export const ChatDetailPageView = ({
           </div>
         )}
 
-        <div className="rounded-t-lg border p-4 backdrop-blur-2xl">
+        <div className="bg-background/50 rounded-t-lg border p-4 backdrop-blur-2xl">
           <Form {...form}>
             <form onSubmit={onSubmit} className="flex flex-col gap-4">
               <FormField
