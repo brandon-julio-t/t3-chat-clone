@@ -6,7 +6,7 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover";
 import { saveChatModel } from "../server-actions/chat-model";
-import { AI_MODELS } from "~/app/domains/chat/constants";
+import { AI_MODELS } from "~/domains/chat/constants";
 import {
   Command,
   CommandEmpty,

@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { uploadFiles } from "../server-actions/upload-files";
 import type { z } from "zod";
-import type { sendMessageSchema } from "~/app/domains/chat/schemas";
+import type { sendMessageSchema } from "~/domains/chat/schemas";
 
 export const InputAttachment = ({
   setAttachmentFiles,

@@ -18,7 +18,7 @@ import {
 import { Textarea } from "~/components/ui/textarea";
 import { api, getBaseUrl } from "~/trpc/react";
 import { ChatItem } from "./chat-item";
-import { sendMessageSchema } from "~/app/domains/chat/schemas";
+import { sendMessageSchema } from "~/domains/chat/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InputAttachment } from "./input-attachment";
 import { FileIcon, XIcon } from "lucide-react";

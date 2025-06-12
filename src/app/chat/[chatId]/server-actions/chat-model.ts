@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { getSession } from "~/lib/auth";
-import { DEFAULT_AI_MODEL } from "~/app/domains/chat/constants";
+import { DEFAULT_AI_MODEL } from "~/domains/chat/constants";
 
 export const getChatModel = async () => {
   const session = await getSession();

@@ -10,7 +10,7 @@ import { z } from "zod";
 import {
   attachmentFileSchema,
   sendMessageSchema,
-} from "~/app/domains/chat/schemas";
+} from "~/domains/chat/schemas";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 const DEFAULT_CONVERSATION_TITLE = "New Chat";

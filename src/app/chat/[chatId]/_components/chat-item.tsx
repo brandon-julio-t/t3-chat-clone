@@ -1,7 +1,7 @@
 import { type ConversationItem } from "@prisma/client";
 import { FileIcon } from "lucide-react";
 import { z } from "zod";
-import { attachmentFileSchema } from "~/app/domains/chat/schemas";
+import { attachmentFileSchema } from "~/domains/chat/schemas";
 import { Markdown } from "~/components/markdown";
 import { TextShimmer } from "~/components/text-shimmer";
 import { cn } from "~/lib/utils";
