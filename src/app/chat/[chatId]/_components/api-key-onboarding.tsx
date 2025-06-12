@@ -39,45 +39,47 @@ export const ApiKeyOnboarding = () => {
   });
 
   return (
-    <main className="container mx-auto flex min-h-svh max-w-lg flex-col px-4">
-      <section className="grid flex-1 place-items-center">
-        <Form {...form}>
-          <form onSubmit={onSubmit} className="flex w-full flex-col gap-4">
-            <FormField
-              control={form.control}
-              name="apiKey"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>OpenRouter API Key (BYOK)</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="password"
-                      placeholder="sk-or-v1-..."
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Get your OpenRouter API key from{" "}
-                    <a
-                      href="https://openrouter.ai/settings/keys"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="underline underline-offset-4"
-                    >
-                      here
-                    </a>
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+    <section className="grid flex-1 place-items-center">
+      <Form {...form}>
+        <form onSubmit={onSubmit} className="flex w-full flex-col gap-4">
+          <FormField
+            control={form.control}
+            name="apiKey"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>OpenRouter API Key (BYOK)</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="password"
+                    placeholder="sk-or-v1-..."
+                  />
+                </FormControl>
+                <FormDescription>
+                  Get your OpenRouter API key from{" "}
+                  <a
+                    href="https://openrouter.ai/settings/keys"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline underline-offset-4"
+                  >
+                    here
+                  </a>
+                </FormDescription>
+                <FormDescription>
+                  You can update this later in the settings page that can be
+                  accessed from the sidebar footer (bottom left of the screen).
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? "Saving..." : "Save"}
-            </Button>
-          </form>
-        </Form>
-      </section>
-    </main>
+          <Button type="submit" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting ? "Saving..." : "Save"}
+          </Button>
+        </form>
+      </Form>
+    </section>
   );
 };

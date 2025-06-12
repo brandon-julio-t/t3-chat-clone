@@ -11,7 +11,11 @@ const ChatDetailPage = async ({
 }) => {
   const apiKey = await getChatApiKey();
   if (!apiKey) {
-    return <ApiKeyOnboarding />;
+    return (
+      <main className="container mx-auto flex min-h-svh max-w-lg flex-col px-4">
+        <ApiKeyOnboarding />
+      </main>
+    );
   }
 
   const { chatId } = await params;

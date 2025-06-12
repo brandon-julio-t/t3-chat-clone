@@ -4,6 +4,7 @@ import type { Conversation } from "@prisma/client";
 import type { User } from "better-auth";
 import {
   ChevronsUpDown,
+  KeyIcon,
   LogInIcon,
   LogOutIcon,
   PlusIcon,
@@ -14,6 +15,13 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { ModeToggle } from "~/components/mode-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,6 +48,7 @@ import {
 import { useElectricShape } from "~/domains/electric-sql/hooks";
 import { useIsMobile } from "~/hooks/use-mobile";
 import { authClient } from "~/lib/auth-client";
+import { ApiKeyOnboarding } from "../[chatId]/_components/api-key-onboarding";
 
 export const ChatLayoutView = ({
   children,
@@ -61,6 +70,8 @@ export const ChatLayoutView = ({
     () => conversationsShape.data.sort((a, b) => b.id.localeCompare(a.id)),
     [conversationsShape.data],
   );
+
+  const [open, setOpen] = React.useState(false);
 
   return (
     <SidebarProvider>
@@ -159,6 +170,14 @@ export const ChatLayoutView = ({
                       </div>
                     </div>
                   </DropdownMenuLabel>
+
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuItem onClick={() => setOpen(true)}>
+                    <KeyIcon />
+                    <span>OpenRouter API Key</span>
+                  </DropdownMenuItem>
+
                   <DropdownMenuSeparator />
 
                   {user?.isAnonymous ? (
@@ -166,13 +185,13 @@ export const ChatLayoutView = ({
                       <DropdownMenuItem asChild>
                         <Link href="/auth/sign-in">
                           <LogInIcon />
-                          Sign in
+                          <span>Sign in</span>
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
                         <Link href="/auth/sign-up">
                           <UserPlusIcon />
-                          Sign up
+                          <span>Sign up</span>
                         </Link>
                       </DropdownMenuItem>
                     </>
@@ -185,7 +204,7 @@ export const ChatLayoutView = ({
                         }}
                       >
                         <LogOutIcon />
-                        Sign out
+                        <span>Sign out</span>
                       </DropdownMenuItem>
                     </>
                   )}
@@ -195,6 +214,19 @@ export const ChatLayoutView = ({
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>OpenRouter API Key</DialogTitle>
+            <DialogDescription>
+              You can update your OpenRouter API key here.
+            </DialogDescription>
+          </DialogHeader>
+
+          <ApiKeyOnboarding />
+        </DialogContent>
+      </Dialog>
 
       <SidebarInset className="relative">
         <section className="sticky top-0 z-10 flex items-center justify-between">
