@@ -135,8 +135,8 @@
   --sidebar-foreground: var(--color-orange-50);
   --sidebar-primary: var(--color-orange-700);
   --sidebar-primary-foreground: var(--color-orange-50);
-  --sidebar-accent: var(--color-orange-100);
-  --sidebar-accent-foreground: var(--color-orange-950);
+  --sidebar-accent: var(--color-orange-900);
+  --sidebar-accent-foreground: var(--color-orange-100);
   --sidebar-border: var(--color-orange-900);
   --sidebar-ring: var(--color-orange-900);
 }
