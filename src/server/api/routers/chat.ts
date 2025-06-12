@@ -83,32 +83,27 @@ export const chatRouter = createTRPCRouter({
         });
 
         let strBuilder = "";
+        let isUpdating = false;
 
         const writeChunkToDb = throttle(async () => {
+          if (isUpdating) {
+            return;
+          }
+
+          isUpdating = true;
+
+          console.log(`-`.repeat(8), `{ write:start }`, `-`.repeat(8));
+
           await ctx.db.conversationItem.update({
+            select: { id: true },
             where: { id: aiConversationItem.id },
             data: { content: strBuilder },
           });
-        }, 150);
 
-        console.log(
-          input.chatModel,
-          JSON.stringify(
-            history.map((item) => {
-              const { success, data } = z
-                .array(attachmentFileSchema)
-                .safeParse(item.attachments);
+          console.log(`-`.repeat(8), `{ write:done }`, `-`.repeat(8));
 
-              return {
-                role: item.role as "user" | "assistant",
-                content: item.content,
-                experimental_attachments: success ? data : undefined,
-              };
-            }),
-            null,
-            2,
-          ),
-        );
+          isUpdating = false;
+        }, 7);
 
         const onError = async (error: unknown) => {
           console.error(error);
@@ -142,6 +137,9 @@ export const chatRouter = createTRPCRouter({
           }),
 
           onChunk: (chunk) => {
+            console.log(`-`.repeat(8), `{ chunk }`, `-`.repeat(8));
+            console.log(chunk);
+
             if (chunk.chunk.type === "text-delta") {
               strBuilder += chunk.chunk.textDelta;
               void writeChunkToDb();
@@ -161,6 +159,7 @@ export const chatRouter = createTRPCRouter({
             }
 
             await ctx.db.conversationItem.update({
+              select: { id: true },
               where: { id: aiConversationItem.id },
               data: { content: finalMessage, isStreaming: false },
             });
@@ -191,6 +190,7 @@ export const chatRouter = createTRPCRouter({
             });
 
             await ctx.db.conversation.update({
+              select: { id: true },
               where: { id: input.conversationId },
               data: { title: response.text },
             });
