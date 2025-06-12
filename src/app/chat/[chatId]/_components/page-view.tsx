@@ -304,7 +304,7 @@ export const ChatDetailPageView = ({
 
         <div className="bg-background/50 rounded-t-lg border p-4 backdrop-blur-2xl">
           <Form {...form}>
-            <form onSubmit={onSubmit} className="flex flex-col gap-4">
+            <form onSubmit={onSubmit} className="flex flex-col">
               <FormField
                 control={form.control}
                 name="newChatContent"
@@ -327,7 +327,7 @@ export const ChatDetailPageView = ({
                   control={form.control}
                   name="chatMode"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="my-2">
                       <FormControl>
                         <Tabs
                           value={field.value}
