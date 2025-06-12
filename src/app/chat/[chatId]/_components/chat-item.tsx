@@ -23,12 +23,12 @@ export const ChatItem = ({
         className={cn(
           "flex flex-col gap-2 text-sm",
           isUser &&
-            "bg-primary text-primary-foreground ml-auto w-fit max-w-[75%] rounded-lg px-4 py-2.5",
+            "bg-primary text-primary-foreground ml-auto w-fit max-w-[75%] rounded-lg px-3 py-2",
         )}
       >
-        {conversationItem.content ? (
-          <Markdown content={conversationItem.content} />
-        ) : (
+        <Markdown content={conversationItem.content} />
+
+        {conversationItem.isStreaming && (
           <div>
             <TextShimmer className="text-sm leading-relaxed" duration={1.2}>
               Thinking...
