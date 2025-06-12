@@ -44,7 +44,7 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <Toaster richColors />
+            <Toaster position="top-right" richColors />
 
             <AutoSigninAnon user={session?.user}>{children}</AutoSigninAnon>
           </ThemeProvider>
