@@ -1,11 +1,13 @@
 "use client";
 
 import { matchBy, matchStream } from "@electric-sql/experimental";
-import { useShape } from "@electric-sql/react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import type { ConversationItem } from "@prisma/client";
 import type { User } from "better-auth";
+import { FileIcon, XIcon } from "lucide-react";
 import React from "react";
 import { useFieldArray, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { monotonicFactory, ulid } from "ulid";
 import { Button } from "~/components/ui/button";
 import {
@@ -16,13 +18,11 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Textarea } from "~/components/ui/textarea";
-import { api, getBaseUrl } from "~/trpc/react";
-import { ChatItem } from "./chat-item";
 import { sendMessageSchema } from "~/domains/chat/schemas";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useElectricShape } from "~/domains/electric-sql/hooks";
+import { api } from "~/trpc/react";
+import { ChatItem } from "./chat-item";
 import { InputAttachment } from "./input-attachment";
-import { FileIcon, XIcon } from "lucide-react";
-import { toast } from "sonner";
 import { ModelSelector } from "./model-selector";
 
 export const ChatDetailPageView = ({
@@ -36,8 +36,7 @@ export const ChatDetailPageView = ({
   initialModel: string;
   apiKey: string;
 }) => {
-  const conversationItemsShape = useShape<ConversationItem>({
-    url: `${getBaseUrl()}/api/electric-sql`,
+  const conversationItemsShape = useElectricShape<ConversationItem>({
     params: {
       table: `"ConversationItem"`,
       where: `"conversationId" = $1`,

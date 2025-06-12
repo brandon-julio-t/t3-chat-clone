@@ -5,6 +5,7 @@
       "name": "t3-chat-clone",
       "dependencies": {
         "@auth/prisma-adapter": "^2.7.2",
+        "@electric-sql/client": "^1.0.4",
         "@electric-sql/experimental": "^1.0.4",
         "@electric-sql/react": "^1.0.4",
         "@hookform/resolvers": "^5.1.1",

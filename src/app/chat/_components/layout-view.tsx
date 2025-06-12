@@ -1,6 +1,5 @@
 "use client";
 
-import { useShape } from "@electric-sql/react";
 import type { Conversation } from "@prisma/client";
 import type { User } from "better-auth";
 import {
@@ -34,9 +33,9 @@ import {
   SidebarMenuItem,
   SidebarProvider,
 } from "~/components/ui/sidebar";
+import { useElectricShape } from "~/domains/electric-sql/hooks";
 import { useIsMobile } from "~/hooks/use-mobile";
 import { authClient } from "~/lib/auth-client";
-import { getBaseUrl } from "~/trpc/react";
 
 export const ChatLayoutView = ({
   children,
@@ -48,8 +47,7 @@ export const ChatLayoutView = ({
   const isMobile = useIsMobile();
   const router = useRouter();
 
-  const conversationsShape = useShape<Conversation>({
-    url: `${getBaseUrl()}/api/electric-sql`,
+  const conversationsShape = useElectricShape<Conversation>({
     params: {
       table: `"Conversation"`,
     },
