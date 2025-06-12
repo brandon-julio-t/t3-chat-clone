@@ -1,8 +1,12 @@
+import { createLangDB } from "@langdb/vercel-provider";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
+import { put } from "@vercel/blob";
 import {
+  experimental_generateImage,
   extractReasoningMiddleware,
   generateText,
   streamText,
+  tool,
   wrapLanguageModel,
 } from "ai";
 import throttle from "lodash/throttle";
@@ -64,7 +68,7 @@ export const chatRouter = createTRPCRouter({
       });
 
       const openrouter = createOpenRouter({
-        apiKey: input.apiKey,
+        apiKey: input.chatApiKey,
       });
 
       const model = wrapLanguageModel({
@@ -136,6 +140,59 @@ export const chatRouter = createTRPCRouter({
             };
           }),
 
+          toolChoice:
+            input.chatMode === "image"
+              ? {
+                  toolName: "generateImage",
+                  type: "tool",
+                }
+              : undefined,
+
+          tools: {
+            generateImage: tool({
+              description: "Generate an image",
+              parameters: z.object({
+                prompt: z
+                  .string()
+                  .describe("The prompt to generate the image from"),
+              }),
+              execute: async ({ prompt }) => {
+                const { images, warnings } = await experimental_generateImage({
+                  model: createLangDB({
+                    apiKey: input.imageApiKey,
+                  }).imageModel(input.imageModel),
+                  prompt,
+                });
+
+                if (warnings.length > 0) {
+                  console.warn(warnings);
+                }
+
+                // in production, save this image to blob storage and return a URL
+                const imageUrls = await Promise.all(
+                  images.map(async (image) => {
+                    return await put(
+                      `generateImage-${Date.now()}.png`,
+                      Buffer.from(image.uint8Array),
+                      {
+                        access: "public",
+                        addRandomSuffix: true,
+                      },
+                    );
+                  }),
+                );
+
+                return {
+                  images: imageUrls.map((image) => ({
+                    url: image.url,
+                  })),
+
+                  prompt,
+                };
+              },
+            }),
+          },
+
           onChunk: (chunk) => {
             console.log(`-`.repeat(8), `{ chunk }`, `-`.repeat(8));
             console.log(chunk);
@@ -149,13 +206,30 @@ export const chatRouter = createTRPCRouter({
               strBuilder += chunk.chunk.textDelta;
               void writeChunkToDb();
             }
+
+            if (chunk.chunk.type === "tool-result") {
+              if (chunk.chunk.toolName === "generateImage") {
+                const { images } = chunk.chunk.result;
+
+                void (async () => {
+                  const typedAttachments = images.map((image) => ({
+                    url: image.url,
+                    contentType: "image/png",
+                  }));
+
+                  await ctx.db.conversationItem.update({
+                    where: { id: aiConversationItem.id },
+                    data: { attachments: typedAttachments },
+                  });
+                })();
+              }
+            }
           },
 
           onFinish: async (message) => {
-            let finalMessage = message.text;
-
+            const finalMessage = message.text;
             if (!finalMessage) {
-              finalMessage = "[Error]: empty response from model";
+              return;
             }
 
             await ctx.db.conversationItem.update({

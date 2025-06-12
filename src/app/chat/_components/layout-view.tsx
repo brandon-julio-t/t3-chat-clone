@@ -53,9 +53,13 @@ import { ApiKeyOnboarding } from "../[chatId]/_components/api-key-onboarding";
 export const ChatLayoutView = ({
   children,
   user,
+  initialChatApiKey,
+  initialImageApiKey,
 }: {
   children: React.ReactNode;
   user: (User & { isAnonymous?: boolean | null }) | null;
+  initialChatApiKey: string;
+  initialImageApiKey: string;
 }) => {
   const isMobile = useIsMobile();
   const router = useRouter();
@@ -175,7 +179,7 @@ export const ChatLayoutView = ({
 
                   <DropdownMenuItem onClick={() => setOpen(true)}>
                     <KeyIcon />
-                    <span>OpenRouter API Key</span>
+                    <span>Bring Your Own Keys (BYOK)</span>
                   </DropdownMenuItem>
 
                   <DropdownMenuSeparator />
@@ -224,12 +228,18 @@ export const ChatLayoutView = ({
             </DialogDescription>
           </DialogHeader>
 
-          <ApiKeyOnboarding />
+          <ApiKeyOnboarding
+            initialChatApiKey={initialChatApiKey}
+            initialImageApiKey={initialImageApiKey}
+            onSuccess={() => {
+              setOpen(false);
+            }}
+          />
         </DialogContent>
       </Dialog>
 
       <SidebarInset className="relative">
-        <section className="sticky top-0 z-10 flex items-center justify-between">
+        <section className="sticky top-0 z-10 -mb-14 flex items-center justify-between">
           <div className="rounded-br-lg p-2 backdrop-blur-2xl">
             <SidebarTrigger className="size-9" />
           </div>

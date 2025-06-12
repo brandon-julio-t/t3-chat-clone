@@ -15,7 +15,7 @@ interface CodeHighlightProps {
 
 export const CodeHighlight = React.memo(
   ({ className, children, node, ...props }: CodeHighlightProps) => {
-    const { theme } = useTheme();
+    const { resolvedTheme } = useTheme();
 
     // eslint-disable-next-line @typescript-eslint/no-base-to-string
     const code = String(children).trim();
@@ -26,7 +26,7 @@ export const CodeHighlight = React.memo(
     const highlightedCode = useShikiHighlighter(
       code,
       language,
-      theme === "dark" ? "vesper" : "vitesse-light",
+      resolvedTheme === "dark" ? "vesper" : "vitesse-light",
     );
 
     const [state, setState] = React.useState<"idle" | "copy-success">("idle");

@@ -5,10 +5,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { ConversationItem } from "@prisma/client";
 import type { User } from "better-auth";
 import {
+  BrushIcon,
   CommandIcon,
   CornerDownLeftIcon,
   FileIcon,
   SendIcon,
+  TextIcon,
   XIcon,
 } from "lucide-react";
 import React from "react";
@@ -32,27 +34,30 @@ import { saveChatModel } from "../server-actions/chat-model";
 import { ChatItem } from "./chat-item";
 import { InputAttachment } from "./input-attachment";
 import { ModelSelector } from "./model-selector";
+import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
 
 export const ChatDetailPageView = ({
   chatId,
   user,
   initialModel,
-  apiKey,
+  chatApiKey,
+  imageApiKey,
 }: {
   chatId: string;
   user: User | null;
   initialModel: string;
-  apiKey: string;
+  chatApiKey: string;
+  imageApiKey: string;
 }) => {
-  const [modelId, _setModelId] = React.useState(initialModel);
-  const setModelId = React.useCallback((value: string) => {
-    _setModelId(value);
+  const [chatModelId, _setChatModelId] = React.useState(initialModel);
+  const setChatModelId = React.useCallback((value: string) => {
+    _setChatModelId(value);
     void saveChatModel(value);
   }, []);
 
   const selectedModel = React.useMemo(() => {
-    return AI_MODELS.find((model) => model.value === modelId);
-  }, [modelId]);
+    return AI_MODELS.find((model) => model.value === chatModelId);
+  }, [chatModelId]);
 
   const conversationItemsShape = useElectricShape<ConversationItem>({
     params: {
@@ -83,8 +88,11 @@ export const ChatDetailPageView = ({
   const form = useForm({
     resolver: zodResolver(sendMessageSchema),
     defaultValues: {
-      apiKey,
-      chatModel: modelId,
+      chatMode: "chat",
+      chatApiKey: chatApiKey,
+      chatModel: chatModelId,
+      imageApiKey: imageApiKey,
+      imageModel: "openai/dall-e-3",
       conversationId: chatId,
       newChatId: ulid(),
       aiAssistantId: ulid(),
@@ -145,15 +153,28 @@ export const ChatDetailPageView = ({
           },
         });
 
+        let chatMode = data.chatMode;
+        if (!imageApiKey) {
+          chatMode = "chat";
+        }
+
         await Promise.all([
           sendMessageMutation.mutateAsync({
-            newChatId: id,
-            aiAssistantId,
+            chatMode,
+
+            chatApiKey: data.chatApiKey,
+            chatModel: chatModelId,
+
+            imageApiKey: data.imageApiKey,
+            imageModel: data.imageModel,
+
             conversationId: chatId,
-            apiKey: data.apiKey,
-            newChatContent: data.newChatContent,
-            chatModel: modelId,
             attachmentFiles: data.attachmentFiles,
+
+            newChatId: id,
+            newChatContent: data.newChatContent,
+
+            aiAssistantId,
           }),
 
           matchStream(
@@ -299,8 +320,38 @@ export const ChatDetailPageView = ({
                 )}
               />
 
+              {imageApiKey && (
+                <FormField
+                  control={form.control}
+                  name="chatMode"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Tabs
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <TabsList className="overflow-x-auto">
+                            <TabsTrigger value="chat">
+                              <TextIcon /> <span>Chat</span>
+                            </TabsTrigger>
+                            <TabsTrigger value="image">
+                              <BrushIcon /> <span>Image</span>
+                            </TabsTrigger>
+                          </TabsList>
+                        </Tabs>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
               <div className="flex items-center gap-2">
-                <ModelSelector modelId={modelId} setModelId={setModelId} />
+                <ModelSelector
+                  modelId={chatModelId}
+                  setModelId={setChatModelId}
+                />
 
                 <InputAttachment
                   setAttachmentFiles={attatchmentFilesFieldArray.append}
