@@ -7,6 +7,7 @@ import { z } from "zod";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -47,16 +48,33 @@ export const ApiKeyOnboarding = () => {
               name="apiKey"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>API Key (BYOK)</FormLabel>
+                  <FormLabel>OpenRouter API Key (BYOK)</FormLabel>
                   <FormControl>
-                    <Input {...field} type="password" />
+                    <Input
+                      {...field}
+                      type="password"
+                      placeholder="sk-or-v1-..."
+                    />
                   </FormControl>
+                  <FormDescription>
+                    Get your OpenRouter API key from{" "}
+                    <a
+                      href="https://openrouter.ai/settings/keys"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="underline underline-offset-4"
+                    >
+                      here
+                    </a>
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <Button type="submit">Save</Button>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? "Saving..." : "Save"}
+            </Button>
           </form>
         </Form>
       </section>
