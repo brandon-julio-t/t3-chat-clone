@@ -6,7 +6,7 @@ Challenge accepted: https://cloneathon.t3.chat
 
 - [x] Chat with Various LLMs
   - Implement support for multiple language models and providers
-- [ ] Authentication & Sync
+- [x] Authentication & Sync
   - User authentication with chat history synchronization
 - [ ] Browser Friendly
   - Ensure web-based functionality without native app requirements
