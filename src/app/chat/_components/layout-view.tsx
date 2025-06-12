@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
   DropdownMenu,
@@ -53,6 +54,11 @@ export const ChatLayoutView = ({
     },
   });
 
+  const conversations = React.useMemo(
+    () => conversationsShape.data.sort((a, b) => b.id.localeCompare(a.id)),
+    [conversationsShape.data],
+  );
+
   return (
     <SidebarProvider>
       <Sidebar>
@@ -77,7 +83,7 @@ export const ChatLayoutView = ({
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu>
-                {conversationsShape.data.map((conversation) => (
+                {conversations.map((conversation) => (
                   <SidebarMenuItem key={conversation.id}>
                     <SidebarMenuButton asChild>
                       <Link href={`/chat/${conversation.id}`}>
