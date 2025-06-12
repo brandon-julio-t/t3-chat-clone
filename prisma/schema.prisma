@@ -77,7 +77,7 @@ model Conversation {
   id        String             @id
   title     String
   userId    String
-  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User               @relation(fields: [userId], references: [id])
   createdAt DateTime           @default(now())
   updatedAt DateTime           @updatedAt
   messages  ConversationItem[]
@@ -88,9 +88,9 @@ model ConversationItem {
   content        String
   role           String
   userId         String
-  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id])
   conversationId String
-  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
   isStreaming    Boolean
   /// contains:
   /// - url
