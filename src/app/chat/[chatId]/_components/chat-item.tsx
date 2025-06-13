@@ -66,6 +66,42 @@ export const ChatItem = ({
   const updateActiveNextConversationItemIdMutation =
     api.chat.updateActiveNextConversationItemId.useMutation({});
 
+  const executeUpdateActiveNextConversationItemId = (indexDelta: number) => {
+    if (!previousConversationItem) return;
+
+    const newActiveNextConversationItemId =
+      previousConversationItem.multiNextConversationItemIds[
+        currentIndex + indexDelta
+      ];
+
+    if (!newActiveNextConversationItemId) return;
+
+    React.startTransition(async () => {
+      updateOptimisticConversationItems({
+        action: "update",
+        newItem: {
+          ...previousConversationItem,
+          activeNextConversationItemId: newActiveNextConversationItemId,
+        },
+      });
+
+      await Promise.all([
+        updateActiveNextConversationItemIdMutation.mutateAsync({
+          conversationItemId: previousConversationItem.id,
+          newActiveNextConversationItemId,
+        }),
+
+        matchStream(conversationItemsShape.stream, ["update"], (message) => {
+          return (
+            message.value.id === previousConversationItem.id &&
+            message.value.activeNextConversationItemId ===
+              newActiveNextConversationItemId
+          );
+        }),
+      ]);
+    });
+  };
+
   if (conversationItem.isRoot) return null;
 
   return (
@@ -107,38 +143,7 @@ export const ChatItem = ({
                   size="icon"
                   disabled={currentIndex <= 0}
                   onClick={() => {
-                    const newActiveNextConversationItemId =
-                      previousConversationItem.multiNextConversationItemIds[
-                        currentIndex - 1
-                      ];
-
-                    if (!newActiveNextConversationItemId) return;
-
-                    React.startTransition(async () => {
-                      if (!previousConversationItem) return;
-
-                      updateOptimisticConversationItems({
-                        action: "update",
-                        newItem: {
-                          ...previousConversationItem,
-                          activeNextConversationItemId:
-                            newActiveNextConversationItemId,
-                        },
-                      });
-
-                      await Promise.all([
-                        updateActiveNextConversationItemIdMutation.mutateAsync({
-                          conversationItemId: previousConversationItem.id,
-                          newActiveNextConversationItemId,
-                        }),
-
-                        matchStream(
-                          conversationItemsShape.stream,
-                          ["update"],
-                          matchBy("id", previousConversationItem.id),
-                        ),
-                      ]);
-                    });
+                    executeUpdateActiveNextConversationItemId(-1);
                   }}
                 >
                   <ChevronLeftIcon />
@@ -155,38 +160,7 @@ export const ChatItem = ({
                     previousConversationItem.multiNextConversationItemIds.length
                   }
                   onClick={() => {
-                    const newActiveNextConversationItemId =
-                      previousConversationItem.multiNextConversationItemIds[
-                        currentIndex + 1
-                      ];
-
-                    if (!newActiveNextConversationItemId) return;
-
-                    React.startTransition(async () => {
-                      if (!previousConversationItem) return;
-
-                      updateOptimisticConversationItems({
-                        action: "update",
-                        newItem: {
-                          ...previousConversationItem,
-                          activeNextConversationItemId:
-                            newActiveNextConversationItemId,
-                        },
-                      });
-
-                      await Promise.all([
-                        updateActiveNextConversationItemIdMutation.mutateAsync({
-                          conversationItemId: previousConversationItem.id,
-                          newActiveNextConversationItemId,
-                        }),
-
-                        matchStream(
-                          conversationItemsShape.stream,
-                          ["update"],
-                          matchBy("id", previousConversationItem.id),
-                        ),
-                      ]);
-                    });
+                    executeUpdateActiveNextConversationItemId(1);
                   }}
                 >
                   <ChevronRightIcon />
