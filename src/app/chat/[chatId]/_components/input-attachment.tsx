@@ -5,6 +5,7 @@ import { Button } from "~/components/ui/button";
 import { uploadFiles } from "../server-actions/upload-files";
 import type { z } from "zod";
 import type { sendMessageSchema } from "~/domains/chat/schemas";
+import { type AI_MODELS } from "~/domains/chat/constants";
 
 export const InputAttachment = ({
   setAttachmentFiles,
@@ -13,7 +14,7 @@ export const InputAttachment = ({
   setAttachmentFiles: (
     files: z.infer<typeof sendMessageSchema>["attachmentFiles"],
   ) => void;
-  modelModalities: Array<"text" | "file" | "image">;
+  modelModalities: (typeof AI_MODELS)[number]["modalities"];
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const inputFileRef = React.useRef<HTMLInputElement>(null);
@@ -51,6 +52,10 @@ export const InputAttachment = ({
 
     return accept;
   }, [modelModalities]);
+
+  if (!acceptedMimeType) {
+    return null;
+  }
 
   return (
     <>

@@ -2,6 +2,7 @@ import {
   CheckIcon,
   ChevronDownIcon,
   FileIcon,
+  GlobeIcon,
   ImageIcon,
   TextIcon,
 } from "lucide-react";
@@ -97,11 +98,15 @@ export const ModelSelector = ({
                         );
                       case "file":
                         return (
-                          <FileIcon className="text-emerald-500" key={index} />
+                          <FileIcon className="text-pink-500" key={index} />
                         );
                       case "image":
                         return (
                           <ImageIcon className="text-blue-500" key={index} />
+                        );
+                      case "web":
+                        return (
+                          <GlobeIcon className="text-emerald-500" key={index} />
                         );
                       default:
                         return null;

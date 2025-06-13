@@ -7,6 +7,7 @@ export const attachmentFileSchema = z.object({
 
 export const sendMessageSchema = z.object({
   chatMode: z.enum(["chat", "image"]),
+  useWeb: z.boolean(),
 
   chatApiKey: z.string().trim().min(1),
   chatModel: z.string().trim().min(1),

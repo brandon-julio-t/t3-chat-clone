@@ -10,6 +10,7 @@ import {
   CornerDownLeftIcon,
   FileIcon,
   SendIcon,
+  Settings2Icon,
   TextIcon,
   XIcon,
 } from "lucide-react";
@@ -23,8 +24,15 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "~/components/ui/form";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
+import { Switch } from "~/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { Textarea } from "~/components/ui/textarea";
 import { AI_MODELS } from "~/domains/chat/constants";
@@ -98,6 +106,7 @@ export const ChatDetailPageView = ({
     resolver: zodResolver(sendMessageSchema),
     defaultValues: {
       chatMode: "chat",
+      useWeb: false,
       chatApiKey: chatApiKey,
       chatModel: chatModelId,
       imageApiKey: imageApiKey,
@@ -185,6 +194,7 @@ export const ChatDetailPageView = ({
         await Promise.all([
           sendMessageMutation.mutateAsync({
             chatMode,
+            useWeb: data.useWeb,
 
             chatApiKey: data.chatApiKey,
             chatModel: chatModelId,
@@ -372,32 +382,60 @@ export const ChatDetailPageView = ({
                 )}
               />
 
-              {imageApiKey && (
-                <FormField
-                  control={form.control}
-                  name="chatMode"
-                  render={({ field }) => (
-                    <FormItem className="my-2">
-                      <FormControl>
-                        <Tabs
-                          value={field.value}
-                          onValueChange={field.onChange}
-                        >
-                          <TabsList className="overflow-x-auto">
-                            <TabsTrigger value="chat">
-                              <TextIcon /> <span>Chat</span>
-                            </TabsTrigger>
-                            <TabsTrigger value="image">
-                              <BrushIcon /> <span>Image</span>
-                            </TabsTrigger>
-                          </TabsList>
-                        </Tabs>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="secondary" size="icon" className="my-2">
+                    <Settings2Icon />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent align="start">
+                  <div className="flex flex-col gap-4">
+                    <FormField
+                      control={form.control}
+                      name="chatMode"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Tabs
+                              value={field.value}
+                              onValueChange={field.onChange}
+                            >
+                              <TabsList className="overflow-x-auto">
+                                <TabsTrigger value="chat">
+                                  <TextIcon /> <span>Chat</span>
+                                </TabsTrigger>
+                                <TabsTrigger value="image">
+                                  <BrushIcon /> <span>Image</span>
+                                </TabsTrigger>
+                              </TabsList>
+                            </Tabs>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="useWeb"
+                      render={({ field }) => (
+                        <FormItem>
+                          <div className="flex items-center gap-2">
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <FormLabel>Use Web</FormLabel>
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </PopoverContent>
+              </Popover>
 
               <div className="flex items-center gap-2">
                 <ModelSelector

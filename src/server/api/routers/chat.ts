@@ -2,6 +2,7 @@ import { createLangDB } from "@langdb/vercel-provider";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { put } from "@vercel/blob";
 import {
+  APICallError,
   experimental_generateImage,
   extractReasoningMiddleware,
   generateText,
@@ -42,48 +43,46 @@ export const chatRouter = createTRPCRouter({
         },
       });
 
-      void (async () => {
-        const prev = await ctx.db.conversationItem.upsert({
-          where: {
-            id: input.previousConversationItemId ?? "",
-            userId: ctx.session.user.id,
+      const prev = await ctx.db.conversationItem.upsert({
+        where: {
+          id: input.previousConversationItemId ?? "",
+          userId: ctx.session.user.id,
+        },
+        create: {
+          id: ulid(),
+          content: "",
+          role: "user",
+          userId: ctx.session.user.id,
+          conversationId: conversation.id,
+          isStreaming: false,
+          attachments: [],
+          isRoot: true,
+          multiNextConversationItemIds: [input.newChatId],
+          activeNextConversationItemId: input.newChatId,
+        },
+        update: {
+          multiNextConversationItemIds: {
+            push: input.newChatId,
           },
-          create: {
-            id: ulid(),
-            content: "",
-            role: "user",
-            userId: ctx.session.user.id,
-            conversationId: conversation.id,
-            isStreaming: false,
-            attachments: [],
-            isRoot: true,
-            multiNextConversationItemIds: [input.newChatId],
-            activeNextConversationItemId: input.newChatId,
-          },
-          update: {
-            multiNextConversationItemIds: {
-              push: input.newChatId,
-            },
-            activeNextConversationItemId: input.newChatId,
-          },
-        });
+          activeNextConversationItemId: input.newChatId,
+        },
+      });
 
-        await ctx.db.conversationItem.create({
-          select: { id: true },
-          data: {
-            id: input.newChatId,
-            content: input.newChatContent,
-            role: "user",
-            userId: ctx.session.user.id,
-            conversationId: conversation.id,
-            isStreaming: false,
-            attachments: input.attachmentFiles,
-            previousConversationItemId: prev.id,
-            multiNextConversationItemIds: [input.assistantChatId],
-            activeNextConversationItemId: input.assistantChatId,
-          },
-        });
-      })();
+      await ctx.db.conversationItem.create({
+        select: { id: true },
+        data: {
+          id: input.newChatId,
+          content: input.newChatContent,
+          role: "user",
+          userId: ctx.session.user.id,
+          conversationId: conversation.id,
+          isStreaming: false,
+          attachments: input.attachmentFiles,
+          previousConversationItemId: prev.id,
+          multiNextConversationItemIds: [input.assistantChatId],
+          activeNextConversationItemId: input.assistantChatId,
+        },
+      });
 
       const aiConversationItem = await ctx.db.conversationItem.create({
         select: { id: true, content: true, attachments: true },
@@ -105,8 +104,13 @@ export const chatRouter = createTRPCRouter({
         apiKey: input.chatApiKey,
       });
 
+      const modelName = input.useWeb
+        ? /** @see https://openrouter.ai/docs/features/web-search */
+          input.chatModel.split(":")[0] + ":online"
+        : input.chatModel;
+
       const model = wrapLanguageModel({
-        model: openrouter(input.chatModel),
+        model: openrouter(modelName),
         middleware: extractReasoningMiddleware({ tagName: "think" }),
       });
 
@@ -147,7 +151,9 @@ export const chatRouter = createTRPCRouter({
           console.error(error);
 
           let errorMessage = "Unknown error";
-          if (error instanceof Error) {
+          if (APICallError.isInstance(error)) {
+            errorMessage = error.responseBody ?? error.message;
+          } else if (error instanceof Error) {
             errorMessage = error.message;
           } else if (typeof error === "string") {
             errorMessage = error;
