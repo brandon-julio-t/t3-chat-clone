@@ -9,13 +9,19 @@ export function buildConversationItemsTimeline({
 }: BuildConversationItemsTimelineParams) {
   const conversationItemTimeline: typeof conversationItems = [];
 
+  const hashMap = conversationItems.reduce<Record<string, ConversationItem>>(
+    (hashMap, item) => {
+      hashMap[item.id] = item;
+      return hashMap;
+    },
+    {},
+  );
+
   let curr = conversationItems.find((x) => x.isRoot);
   while (curr) {
     conversationItemTimeline.push(curr);
 
-    const next = conversationItems.find(
-      (x) => x.id === curr?.activeNextConversationItemId,
-    );
+    const next = hashMap[curr?.activeNextConversationItemId ?? ""];
     curr = next;
   }
 
