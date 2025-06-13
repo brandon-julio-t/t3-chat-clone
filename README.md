@@ -30,9 +30,13 @@ Challenge accepted: https://cloneathon.t3.chat
 
 > ✅ LangDB
 
+![image](https://github.com/user-attachments/assets/98f55eb3-2972-4f99-9979-0deed1c5e6e9)
+
 - [x] Syntax Highlighting: Implement beautiful code formatting and highlighting
 
 > ✅ React Shiki
+
+![image](https://github.com/user-attachments/assets/9fb5194c-346e-4ac0-aed1-3a9d94428e24)
 
 - [x] Resumable Streams: Enable continuing generation after page refresh
 
@@ -42,17 +46,31 @@ Challenge accepted: https://cloneathon.t3.chat
 
 > ✅ Real world usage of linked list
 
+https://github.com/user-attachments/assets/3b073de9-d752-471b-a0e7-a84a789142a4
+
 - [x] Chat Sharing: Allow sharing conversations with others
 
 > ✅ Freeze the linked list
 
-- [ ] Web Search: Integrate real-time web search functionality
+![image](https://github.com/user-attachments/assets/43ef91ec-dbc2-41cc-a69f-838201aad929)
 
-> 🚧 WIP, Thinking...
+![image](https://github.com/user-attachments/assets/6d629179-acad-4b87-87c9-9376c54b9a55)
+
+- [x] Web Search: Integrate real-time web search functionality
+
+> ✅ OpenRouter
+
+![image](https://github.com/user-attachments/assets/23492e93-2099-4447-8a15-e7889c4713c8)
+
+![image](https://github.com/user-attachments/assets/f7fd6789-41bc-4d71-967d-f9f6b00d8831)
 
 - [x] Bring Your Own Key: Support for custom API keys
 
 > ✅ OpenRouter + Next.js cookie
+
+![image](https://github.com/user-attachments/assets/af53bc2e-92e7-4918-b70f-c542f9468bcb)
+
+![image](https://github.com/user-attachments/assets/adf0edc7-869a-4490-b7ed-00c43832973c)
 
 - [ ] Mobile App: Develop mobile version alongside web app
 
