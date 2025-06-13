@@ -25,5 +25,5 @@ export function buildConversationItemsTimeline({
     return conversationItems;
   }
 
-  return conversationItemTimeline;
+  return conversationItemTimeline.toSorted((a, b) => a.id.localeCompare(b.id));
 }
