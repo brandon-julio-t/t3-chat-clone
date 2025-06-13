@@ -57,8 +57,18 @@ export const AI_MODELS = [
     modalities: ["text", "file", "image", "web"],
   },
   {
+    label: "Llama 4 Maverick (Free)",
+    value: "meta-llama/llama-4-maverick:free",
+    modalities: ["text", "file", "image"],
+  },
+  {
     label: "Llama 4 Scout",
     value: "meta-llama/llama-4-scout",
+    modalities: ["text", "web"],
+  },
+  {
+    label: "Llama 4 Scout (Free)",
+    value: "meta-llama/llama-4-scout:free",
     modalities: ["text"],
   },
   {
