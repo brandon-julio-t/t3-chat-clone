@@ -12,7 +12,7 @@ export const sendMessageSchema = z.object({
   chatApiKey: z.string().trim().min(1),
   chatModel: z.string().trim().min(1),
 
-  imageApiKey: z.string().trim().min(1),
+  imageApiKey: z.string().trim(),
   imageModel: z.string().trim().min(1),
 
   conversationId: z.string().trim().min(1),
