@@ -32,6 +32,7 @@ export const chatRouter = createTRPCRouter({
         },
         where: {
           id: input.conversationId,
+          userId: ctx.session.user.id,
         },
         update: {},
         create: {
