@@ -42,6 +42,10 @@ Challenge accepted: https://cloneathon.t3.chat
 
 > ✅ Electric SQL
 
+https://github.com/user-attachments/assets/6f436b81-b2c4-482e-adcd-37b0279a6c6a
+
+> 💡 Note: the refresh are triggered by me (`CMD+R`)
+
 - [x] Chat Branching: Create alternative conversation paths
 
 > ✅ Real world usage of linked list
