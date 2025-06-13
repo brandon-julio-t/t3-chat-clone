@@ -23,7 +23,7 @@ export const ChatSharingDetailPageView = ({
   };
 }) => {
   return (
-    <main className="container mx-auto max-w-4xl">
+    <main className="container mx-auto max-w-4xl pt-6">
       <div className="flex flex-col gap-4">
         <h1 className="text-2xl font-bold">Chat Sharing</h1>
       </div>
