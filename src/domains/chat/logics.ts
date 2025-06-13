@@ -7,8 +7,6 @@ export interface BuildConversationItemsTimelineParams {
 export function buildConversationItemsTimeline({
   conversationItems,
 }: BuildConversationItemsTimelineParams) {
-  const conversationItemTimeline: typeof conversationItems = [];
-
   const hashMap = conversationItems.reduce<Record<string, ConversationItem>>(
     (hashMap, item) => {
       hashMap[item.id] = item;
@@ -17,10 +15,13 @@ export function buildConversationItemsTimeline({
     {},
   );
 
+  const conversationItemTimeline: typeof conversationItems = [];
+
   let curr = conversationItems.find((x) => x.isRoot);
   while (curr) {
-    conversationItemTimeline.push(curr);
-
+    if (!curr.isRoot) {
+      conversationItemTimeline.push(curr);
+    }
     const next = hashMap[curr?.activeNextConversationItemId ?? ""];
     curr = next;
   }

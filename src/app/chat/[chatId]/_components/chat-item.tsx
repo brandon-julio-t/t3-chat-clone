@@ -102,8 +102,6 @@ export const ChatItem = ({
     });
   };
 
-  if (conversationItem.isRoot) return null;
-
   return (
     <div className="flex flex-col gap-0.5">
       <section

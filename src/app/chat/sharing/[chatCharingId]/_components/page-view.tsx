@@ -32,8 +32,6 @@ export const ChatSharingDetailPageView = ({
         {conversationSharing.conversationSharingItems
           .map((x) => x.conversationItem)
           .map((conversationItem) => {
-            if (conversationItem.isRoot) return null;
-
             const isUser = conversationItem.role === "user";
 
             const attachmentFilesParseResult = z
