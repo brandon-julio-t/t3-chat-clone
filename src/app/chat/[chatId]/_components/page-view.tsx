@@ -25,8 +25,10 @@ import {
   FormItem,
   FormMessage,
 } from "~/components/ui/form";
+import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { Textarea } from "~/components/ui/textarea";
 import { AI_MODELS } from "~/domains/chat/constants";
+import { buildConversationItemsTimeline } from "~/domains/chat/logics";
 import { sendMessageSchema } from "~/domains/chat/schemas";
 import { useElectricShape } from "~/domains/electric-sql/hooks";
 import { api } from "~/trpc/react";
@@ -34,7 +36,6 @@ import { saveChatModel } from "../server-actions/chat-model";
 import { ChatItem } from "./chat-item";
 import { InputAttachment } from "./input-attachment";
 import { ModelSelector } from "./model-selector";
-import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
 
 export const ChatDetailPageView = ({
   chatId,
@@ -88,21 +89,9 @@ export const ChatDetailPageView = ({
     });
 
   const conversationItems = React.useMemo(() => {
-    const conversationItemTimeline: typeof optimisticConversationItems = [];
-
-    let curr = optimisticConversationItems.find(
-      (x) => x.previousConversationItemId === null,
-    );
-    while (curr) {
-      conversationItemTimeline.push(curr);
-
-      const next = optimisticConversationItems.find(
-        (x) => x.id === curr?.activeNextConversationItemId,
-      );
-      curr = next;
-    }
-
-    return conversationItemTimeline;
+    return buildConversationItemsTimeline({
+      conversationItems: optimisticConversationItems,
+    });
   }, [optimisticConversationItems]);
 
   const form = useForm({
@@ -118,6 +107,7 @@ export const ChatDetailPageView = ({
       assistantChatId: ulid(),
       newChatContent: "",
       attachmentFiles: [],
+      previousConversationItemId: undefined,
     },
   });
 
@@ -139,8 +129,12 @@ export const ChatDetailPageView = ({
 
   const onSubmit = form.handleSubmit(
     async (data) => {
-      const previousConversationItemId =
-        data.previousConversationItemId ?? conversationItems.at(-1)?.id ?? null;
+      let previousConversationItemId = data.previousConversationItemId;
+
+      if (typeof previousConversationItemId === "undefined") {
+        previousConversationItemId = conversationItems.at(-1)?.id ?? null;
+      }
+
       const userConversationItemId = createUlid();
       const assistantConversationItemId = createUlid();
 
@@ -157,6 +151,7 @@ export const ChatDetailPageView = ({
             attachments: data.attachmentFiles,
             createdAt: new Date(),
             updatedAt: new Date(),
+            isRoot: false,
             previousConversationItemId,
             multiNextConversationItemIds: [assistantConversationItemId],
             activeNextConversationItemId: assistantConversationItemId,
@@ -175,6 +170,7 @@ export const ChatDetailPageView = ({
             attachments: [],
             createdAt: new Date(),
             updatedAt: new Date(),
+            isRoot: false,
             previousConversationItemId: userConversationItemId,
             multiNextConversationItemIds: [],
             activeNextConversationItemId: null,
@@ -300,6 +296,7 @@ export const ChatDetailPageView = ({
                   updateOptimisticConversationItems={
                     updateOptimisticConversationItems
                   }
+                  conversationItemsShape={conversationItemsShape}
                   onEditSubmitted={async ({
                     conversationItemId,
                     newContent,

@@ -17,12 +17,15 @@ import { Button } from "~/components/ui/button";
 import React from "react";
 import { Textarea } from "~/components/ui/textarea";
 import { api } from "~/trpc/react";
+import type { UseShapeResult } from "@electric-sql/react";
+import { matchBy, matchStream } from "@electric-sql/experimental";
 
 export const ChatItem = ({
   conversationItems,
   conversationItem,
   updateOptimisticConversationItems,
   onEditSubmitted,
+  conversationItemsShape,
 }: {
   conversationItems: ConversationItem[];
   conversationItem: ConversationItem;
@@ -37,6 +40,7 @@ export const ChatItem = ({
     conversationItemId: string;
     newContent: string;
   }) => void;
+  conversationItemsShape: UseShapeResult<ConversationItem>;
 }) => {
   const [isEditing, setIsEditing] = React.useState(false);
   const [draftContent, setDraftContent] = React.useState(
@@ -61,6 +65,8 @@ export const ChatItem = ({
 
   const updateActiveNextConversationItemIdMutation =
     api.chat.updateActiveNextConversationItemId.useMutation({});
+
+  if (conversationItem.isRoot) return null;
 
   return (
     <div className="flex flex-col gap-0.5">
@@ -120,12 +126,18 @@ export const ChatItem = ({
                         },
                       });
 
-                      await updateActiveNextConversationItemIdMutation.mutateAsync(
-                        {
+                      await Promise.all([
+                        updateActiveNextConversationItemIdMutation.mutateAsync({
                           conversationItemId: previousConversationItem.id,
                           newActiveNextConversationItemId,
-                        },
-                      );
+                        }),
+
+                        matchStream(
+                          conversationItemsShape.stream,
+                          ["update"],
+                          matchBy("id", previousConversationItem.id),
+                        ),
+                      ]);
                     });
                   }}
                 >
@@ -162,12 +174,18 @@ export const ChatItem = ({
                         },
                       });
 
-                      await updateActiveNextConversationItemIdMutation.mutateAsync(
-                        {
+                      await Promise.all([
+                        updateActiveNextConversationItemIdMutation.mutateAsync({
                           conversationItemId: previousConversationItem.id,
                           newActiveNextConversationItemId,
-                        },
-                      );
+                        }),
+
+                        matchStream(
+                          conversationItemsShape.stream,
+                          ["update"],
+                          matchBy("id", previousConversationItem.id),
+                        ),
+                      ]);
                     });
                   }}
                 >
