@@ -56,11 +56,13 @@ export const ChatLayoutView = ({
   user,
   initialChatApiKey,
   initialImageApiKey,
+  defaultOpenSidebar,
 }: {
   children: React.ReactNode;
   user: (User & { isAnonymous?: boolean | null }) | null;
   initialChatApiKey: string;
   initialImageApiKey: string;
+  defaultOpenSidebar: boolean;
 }) => {
   const isMobile = useIsMobile();
   const router = useRouter();
@@ -79,7 +81,7 @@ export const ChatLayoutView = ({
   const [open, setOpen] = React.useState(false);
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={defaultOpenSidebar}>
       <Sidebar>
         <SidebarHeader>
           <SidebarMenu>
