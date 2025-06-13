@@ -38,13 +38,13 @@ Challenge accepted: https://cloneathon.t3.chat
 
 > ✅ Electric SQL
 
-- [ ] Chat Branching: Create alternative conversation paths
+- [x] Chat Branching: Create alternative conversation paths
 
-> ✅ real world usage of linked list
+> ✅ Real world usage of linked list
 
-- [ ] Chat Sharing: Allow sharing conversations with others
+- [x] Chat Sharing: Allow sharing conversations with others
 
-> 🚧 WIP, Thinking...
+> ✅ Freeze the linked list
 
 - [ ] Web Search: Integrate real-time web search functionality
 
