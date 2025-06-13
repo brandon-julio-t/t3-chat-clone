@@ -40,7 +40,7 @@ Challenge accepted: https://cloneathon.t3.chat
 
 - [ ] Chat Branching: Create alternative conversation paths
 
-> 🚧 WIP, Thinking...
+> ✅ real world usage of linked list
 
 - [ ] Chat Sharing: Allow sharing conversations with others
 
