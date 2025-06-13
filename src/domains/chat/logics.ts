@@ -28,8 +28,8 @@ export function buildConversationItemsTimeline({
   if (conversationItemTimeline.length <= 0) {
     // if nothing is built, it means the conversation array is old version, i.e. without the linked list
     // so just return the original conversation items to at least display something
-    return conversationItems;
+    return conversationItems.toSorted((a, b) => a.id.localeCompare(b.id));
   }
 
-  return conversationItemTimeline.toSorted((a, b) => a.id.localeCompare(b.id));
+  return conversationItemTimeline;
 }
