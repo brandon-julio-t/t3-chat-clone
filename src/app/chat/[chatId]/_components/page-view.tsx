@@ -67,23 +67,43 @@ export const ChatDetailPageView = ({
     },
   });
 
-  const [_conversationItems, dispatchConversationItems] = React.useOptimistic<
-    ConversationItem[],
-    { action: "add"; newItem: ConversationItem }
-  >(conversationItemsShape?.data ?? [], (state, action) => {
-    if (action.action === "add") {
-      return state.some((item) => item.id === action.newItem.id)
-        ? state
-        : [...state, action.newItem];
+  const [optimisticConversationItems, updateOptimisticConversationItems] =
+    React.useOptimistic<
+      ConversationItem[],
+      { action: "insert" | "update"; newItem: ConversationItem }
+    >(conversationItemsShape?.data ?? [], (state, action) => {
+      if (action.action === "insert") {
+        return state.some((item) => item.id === action.newItem.id)
+          ? state
+          : [...state, action.newItem];
+      }
+
+      if (action.action === "update") {
+        return state.map((item) =>
+          item.id === action.newItem.id ? { ...item, ...action.newItem } : item,
+        );
+      }
+
+      return state;
+    });
+
+  const conversationItems = React.useMemo(() => {
+    const conversationItemTimeline: typeof optimisticConversationItems = [];
+
+    let curr = optimisticConversationItems.find(
+      (x) => x.previousConversationItemId === null,
+    );
+    while (curr) {
+      conversationItemTimeline.push(curr);
+
+      const next = optimisticConversationItems.find(
+        (x) => x.id === curr?.activeNextConversationItemId,
+      );
+      curr = next;
     }
 
-    return state;
-  });
-
-  const conversationItems = React.useMemo(
-    () => _conversationItems.toSorted((a, b) => a.id.localeCompare(b.id)),
-    [_conversationItems],
-  );
+    return conversationItemTimeline;
+  }, [optimisticConversationItems]);
 
   const form = useForm({
     resolver: zodResolver(sendMessageSchema),
@@ -95,7 +115,7 @@ export const ChatDetailPageView = ({
       imageModel: "openai/dall-e-3",
       conversationId: chatId,
       newChatId: ulid(),
-      aiAssistantId: ulid(),
+      assistantChatId: ulid(),
       newChatContent: "",
       attachmentFiles: [],
     },
@@ -119,14 +139,16 @@ export const ChatDetailPageView = ({
 
   const onSubmit = form.handleSubmit(
     async (data) => {
-      const id = createUlid();
-      const aiAssistantId = createUlid();
+      const previousConversationItemId =
+        data.previousConversationItemId ?? conversationItems.at(-1)?.id ?? null;
+      const userConversationItemId = createUlid();
+      const assistantConversationItemId = createUlid();
 
       React.startTransition(async () => {
-        dispatchConversationItems({
-          action: "add",
+        updateOptimisticConversationItems({
+          action: "insert",
           newItem: {
-            id,
+            id: userConversationItemId,
             content: data.newChatContent,
             role: "user",
             userId: user?.id ?? "",
@@ -135,13 +157,16 @@ export const ChatDetailPageView = ({
             attachments: data.attachmentFiles,
             createdAt: new Date(),
             updatedAt: new Date(),
+            previousConversationItemId,
+            multiNextConversationItemIds: [assistantConversationItemId],
+            activeNextConversationItemId: assistantConversationItemId,
           },
         });
 
-        dispatchConversationItems({
-          action: "add",
+        updateOptimisticConversationItems({
+          action: "insert",
           newItem: {
-            id: aiAssistantId,
+            id: assistantConversationItemId,
             content: "",
             role: "assistant",
             userId: user?.id ?? "",
@@ -150,6 +175,9 @@ export const ChatDetailPageView = ({
             attachments: [],
             createdAt: new Date(),
             updatedAt: new Date(),
+            previousConversationItemId: userConversationItemId,
+            multiNextConversationItemIds: [],
+            activeNextConversationItemId: null,
           },
         });
 
@@ -171,27 +199,29 @@ export const ChatDetailPageView = ({
             conversationId: chatId,
             attachmentFiles: data.attachmentFiles,
 
-            newChatId: id,
+            previousConversationItemId,
+
+            newChatId: userConversationItemId,
             newChatContent: data.newChatContent,
 
-            aiAssistantId,
+            assistantChatId: assistantConversationItemId,
           }),
 
           matchStream(
             conversationItemsShape.stream,
             ["insert"],
-            matchBy("id", id),
+            matchBy("id", userConversationItemId),
           ),
 
           matchStream(
             conversationItemsShape.stream,
             ["insert"],
-            matchBy("id", aiAssistantId),
+            matchBy("id", assistantConversationItemId),
           ),
         ]);
       });
 
-      form.resetField("newChatContent");
+      form.reset();
       attatchmentFilesFieldArray.replace([]);
     },
     (error) => {
@@ -261,10 +291,33 @@ export const ChatDetailPageView = ({
             </div>
           </div>
         ) : (
-          <div className="flex flex-col gap-4 p-4">
+          <div className="flex flex-col pt-6">
             {conversationItems.map((conversationItem) => (
               <div key={conversationItem.id}>
-                <ChatItem conversationItem={conversationItem} />
+                <ChatItem
+                  conversationItems={conversationItems}
+                  conversationItem={conversationItem}
+                  updateOptimisticConversationItems={
+                    updateOptimisticConversationItems
+                  }
+                  onEditSubmitted={async ({
+                    conversationItemId,
+                    newContent,
+                  }) => {
+                    const updatedConversationItem = conversationItems.find(
+                      (item) => item.id === conversationItemId,
+                    );
+
+                    form.setValue(
+                      "previousConversationItemId",
+                      updatedConversationItem?.previousConversationItemId,
+                    );
+
+                    form.setValue("newChatContent", newContent);
+
+                    await onSubmit();
+                  }}
+                />
               </div>
             ))}
           </div>

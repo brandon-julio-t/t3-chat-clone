@@ -40,6 +40,23 @@ export const chatRouter = createTRPCRouter({
       });
 
       void (async () => {
+        if (input.previousConversationItemId) {
+          await ctx.db.conversationItem.update({
+            where: {
+              id: input.previousConversationItemId,
+              userId: ctx.session.user.id,
+            },
+            data: {
+              multiNextConversationItemIds: {
+                push: input.newChatId,
+              },
+              activeNextConversationItemId: input.newChatId,
+            },
+          });
+        }
+      })();
+
+      void (async () => {
         await ctx.db.conversationItem.create({
           select: { id: true },
           data: {
@@ -50,6 +67,9 @@ export const chatRouter = createTRPCRouter({
             conversationId: conversation.id,
             isStreaming: false,
             attachments: input.attachmentFiles,
+            previousConversationItemId: input.previousConversationItemId,
+            multiNextConversationItemIds: [input.assistantChatId],
+            activeNextConversationItemId: input.assistantChatId,
           },
         });
       })();
@@ -57,13 +77,16 @@ export const chatRouter = createTRPCRouter({
       const aiConversationItem = await ctx.db.conversationItem.create({
         select: { id: true, content: true, attachments: true },
         data: {
-          id: input.aiAssistantId,
+          id: input.assistantChatId,
           content: "",
           role: "assistant",
           userId: ctx.session.user.id,
           conversationId: conversation.id,
           isStreaming: true,
           attachments: [],
+          previousConversationItemId: input.newChatId,
+          multiNextConversationItemIds: [],
+          activeNextConversationItemId: null,
         },
       });
 
@@ -270,5 +293,24 @@ export const chatRouter = createTRPCRouter({
       }
 
       return aiConversationItem;
+    }),
+
+  updateActiveNextConversationItemId: protectedProcedure
+    .input(
+      z.object({
+        conversationItemId: z.string(),
+        newActiveNextConversationItemId: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      return await ctx.db.conversationItem.update({
+        where: {
+          id: input.conversationItemId,
+          userId: ctx.session.user.id,
+        },
+        data: {
+          activeNextConversationItemId: input.newActiveNextConversationItemId,
+        },
+      });
     }),
 });

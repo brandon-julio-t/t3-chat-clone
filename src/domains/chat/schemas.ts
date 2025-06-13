@@ -16,10 +16,12 @@ export const sendMessageSchema = z.object({
 
   conversationId: z.string().trim().min(1),
 
-  aiAssistantId: z.string().trim().min(1),
+  previousConversationItemId: z.string().trim().nullish(),
 
   newChatId: z.string().trim().min(1),
   newChatContent: z.string().trim().min(1),
+
+  assistantChatId: z.string().trim().min(1),
 
   attachmentFiles: z.array(attachmentFileSchema),
 });
