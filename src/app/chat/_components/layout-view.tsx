@@ -244,7 +244,7 @@ export const ChatLayoutView = ({
       </Dialog>
 
       <SidebarInset className="relative">
-        <section className="sticky top-0 z-10 -mb-14 flex items-center justify-between">
+        <section className="sticky top-0 z-10 -mb-[calc(var(--spacing)*2+var(--spacing)*9))] flex items-center justify-between">
           <div className="bg-background/50 rounded-br-lg p-1 backdrop-blur-2xl">
             <SidebarTrigger className="size-9" />
           </div>
