@@ -24,7 +24,11 @@ Challenge accepted: https://cloneathon.t3.chat
 
 - [x] Attachment Support: Allow users to upload files (images and pdfs)
 
-> ✅ OpenRouter
+> ✅ AI SDK (`experimental_attachments`) + OpenRouter
+
+![image](https://github.com/user-attachments/assets/ad38b5f7-6f3b-4d41-8225-a882123ad146)
+
+https://github.com/user-attachments/assets/213d1798-57c8-4af7-944f-702624ec8e08
 
 - [x] Image Generation Support: Add AI-powered image generation capabilities
 
