@@ -11,18 +11,19 @@ datasource db {
 }
 
 model User {
-  id                String             @id
-  name              String
-  email             String
-  emailVerified     Boolean
-  image             String?
-  createdAt         DateTime
-  updatedAt         DateTime
-  sessions          Session[]
-  accounts          Account[]
-  isAnonymous       Boolean?
-  conversations     Conversation[]
-  conversationItems ConversationItem[]
+  id                  String                @id
+  name                String
+  email               String
+  emailVerified       Boolean
+  image               String?
+  createdAt           DateTime
+  updatedAt           DateTime
+  sessions            Session[]
+  accounts            Account[]
+  isAnonymous         Boolean?
+  conversations       Conversation[]
+  conversationItems   ConversationItem[]
+  ConversationSharing ConversationSharing[]
 
   @@unique([email])
   @@map("user")
@@ -74,13 +75,13 @@ model Verification {
 }
 
 model Conversation {
-  id        String             @id
-  title     String
-  userId    String
-  user      User               @relation(fields: [userId], references: [id])
-  createdAt DateTime           @default(now())
-  updatedAt DateTime           @updatedAt
-  messages  ConversationItem[]
+  id                String             @id
+  title             String
+  userId            String
+  user              User               @relation(fields: [userId], references: [id])
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  conversationItems ConversationItem[]
 }
 
 model ConversationItem {
@@ -104,5 +105,25 @@ model ConversationItem {
   multiNextConversationItemIds String[] @default([])
   activeNextConversationItemId String?
 
+  conversationSharingItems ConversationSharingItem[]
+
   @@index([userId, conversationId])
+}
+
+model ConversationSharing {
+  id                       String                    @id
+  userId                   String
+  user                     User                      @relation(fields: [userId], references: [id])
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+  conversationSharingItems ConversationSharingItem[]
+}
+
+model ConversationSharingItem {
+  conversationSharingId String
+  conversationSharing   ConversationSharing @relation(fields: [conversationSharingId], references: [id], onDelete: Cascade)
+  conversationItemId    String
+  conversationItem      ConversationItem    @relation(fields: [conversationItemId], references: [id], onDelete: Cascade)
+
+  @@id([conversationSharingId, conversationItemId])
 }

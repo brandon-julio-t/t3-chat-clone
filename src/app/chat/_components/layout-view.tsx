@@ -11,7 +11,7 @@ import {
   UserPlusIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { ModeToggle } from "~/components/mode-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
@@ -49,6 +49,7 @@ import { useElectricShape } from "~/domains/electric-sql/hooks";
 import { useIsMobile } from "~/hooks/use-mobile";
 import { authClient } from "~/lib/auth-client";
 import { ApiKeyOnboarding } from "../[chatId]/_components/api-key-onboarding";
+import { ConversationItem } from "./chat-sidebar-content/conversation-item";
 
 export const ChatLayoutView = ({
   children,
@@ -63,7 +64,6 @@ export const ChatLayoutView = ({
 }) => {
   const isMobile = useIsMobile();
   const router = useRouter();
-  const pathname = usePathname();
 
   const conversationsShape = useElectricShape<Conversation>({
     params: {
@@ -111,19 +111,12 @@ export const ChatLayoutView = ({
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-                {conversations.map((conversation) => {
-                  const isActive = pathname === `/chat/${conversation.id}`;
-
-                  return (
-                    <SidebarMenuItem key={conversation.id}>
-                      <SidebarMenuButton isActive={isActive} asChild>
-                        <Link href={`/chat/${conversation.id}`} prefetch={true}>
-                          <span>{conversation.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  );
-                })}
+                {conversations.map((conversation) => (
+                  <ConversationItem
+                    key={conversation.id}
+                    conversation={conversation}
+                  />
+                ))}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
