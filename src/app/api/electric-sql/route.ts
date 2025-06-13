@@ -26,8 +26,12 @@ export async function GET(req: Request) {
   }
 
   // Add the source params.
-  originUrl.searchParams.set(`source_id`, env.ELECTRIC_SQL_SOURCE_ID);
-  originUrl.searchParams.set(`secret`, env.ELECTRIC_SQL_SOURCE_SECRET);
+  if (env.ELECTRIC_SQL_SOURCE_ID) {
+    originUrl.searchParams.set(`source_id`, env.ELECTRIC_SQL_SOURCE_ID);
+  }
+  if (env.ELECTRIC_SQL_SOURCE_SECRET) {
+    originUrl.searchParams.set(`secret`, env.ELECTRIC_SQL_SOURCE_SECRET);
+  }
 
   // Proxy the authorised request on to the Electric Cloud.
   const response = await fetch(originUrl);

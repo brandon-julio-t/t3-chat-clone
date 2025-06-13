@@ -16,8 +16,8 @@ export const env = createEnv({
       .enum(["development", "test", "production"])
       .default("development"),
     ELECTRIC_SQL_BACKEND_URL: z.string().url(),
-    ELECTRIC_SQL_SOURCE_ID: z.string(),
-    ELECTRIC_SQL_SOURCE_SECRET: z.string(),
+    ELECTRIC_SQL_SOURCE_ID: z.string().nullish(),
+    ELECTRIC_SQL_SOURCE_SECRET: z.string().nullish(),
     BLOB_READ_WRITE_TOKEN: z.string(),
   },
 

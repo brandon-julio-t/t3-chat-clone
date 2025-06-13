@@ -2,3 +2,8 @@ localhost:4000 {
 	reverse_proxy http://localhost:3000
 	encode
 }
+
+localhost:4001 {
+	reverse_proxy http://localhost:3001
+	encode
+}
