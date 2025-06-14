@@ -25,6 +25,7 @@
     "@electric-sql/client": "^1.0.4",
     "@electric-sql/experimental": "^1.0.4",
     "@electric-sql/react": "^1.0.4",
+    "@faker-js/faker": "^9.8.0",
     "@hookform/resolvers": "^5.1.1",
     "@langdb/vercel-provider": "^0.1.1",
     "@openrouter/ai-sdk-provider": "^0.7.1",
