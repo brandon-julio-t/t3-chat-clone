@@ -217,7 +217,7 @@ export const ChatItem = ({
       {attachmentFilesParseResult.success && (
         <section
           className={cn(
-            "flex flex-row gap-4 overflow-x-auto py-4",
+            "flex flex-row gap-2 overflow-x-auto pt-1 pb-2",
             isUser ? "justify-end" : "justify-start",
           )}
         >
