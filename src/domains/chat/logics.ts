@@ -19,9 +19,7 @@ export function buildConversationItemsTimeline({
 
   let curr = conversationItems.find((x) => x.isRoot);
   while (curr) {
-    if (!curr.isRoot) {
-      conversationItemTimeline.push(curr);
-    }
+    conversationItemTimeline.push(curr);
     const next = hashMap[curr?.activeNextConversationItemId ?? ""];
     curr = next;
   }

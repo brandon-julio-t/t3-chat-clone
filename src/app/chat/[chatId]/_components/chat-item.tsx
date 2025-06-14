@@ -1,3 +1,5 @@
+import { matchStream } from "@electric-sql/experimental";
+import type { UseShapeResult } from "@electric-sql/react";
 import { type ConversationItem } from "@prisma/client";
 import {
   CheckIcon,
@@ -8,17 +10,15 @@ import {
   PenIcon,
   XIcon,
 } from "lucide-react";
+import React from "react";
 import { z } from "zod";
-import { attachmentFileSchema } from "~/domains/chat/schemas";
 import { Markdown } from "~/components/markdown";
 import { TextShimmer } from "~/components/text-shimmer";
-import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
-import React from "react";
 import { Textarea } from "~/components/ui/textarea";
+import { attachmentFileSchema } from "~/domains/chat/schemas";
+import { cn } from "~/lib/utils";
 import { api } from "~/trpc/react";
-import type { UseShapeResult } from "@electric-sql/react";
-import { matchBy, matchStream } from "@electric-sql/experimental";
 
 export const ChatItem = ({
   conversationItems,
@@ -101,6 +101,10 @@ export const ChatItem = ({
       ]);
     });
   };
+
+  if (conversationItem.isRoot) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col gap-0.5">

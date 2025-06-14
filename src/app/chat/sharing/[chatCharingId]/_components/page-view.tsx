@@ -38,6 +38,10 @@ export const ChatSharingDetailPageView = ({
               .array(attachmentFileSchema)
               .safeParse(conversationItem.attachments);
 
+            if (conversationItem.isRoot) {
+              return null;
+            }
+
             return (
               <div key={conversationItem.id} className="flex flex-col gap-0.5">
                 <section
