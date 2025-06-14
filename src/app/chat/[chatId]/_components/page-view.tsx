@@ -148,6 +148,27 @@ export const ChatDetailPageView = ({
       const assistantConversationItemId = createUlid();
 
       React.startTransition(async () => {
+        if (previousConversationItemId) {
+          const previousConversationItem = conversationItems.find(
+            (item) => item.id === previousConversationItemId,
+          );
+
+          if (previousConversationItem) {
+            updateOptimisticConversationItems({
+              action: "update",
+              newItem: {
+                ...previousConversationItem,
+                multiNextConversationItemIds: [
+                  ...previousConversationItem.multiNextConversationItemIds,
+                  userConversationItemId,
+                ],
+                activeNextConversationItemId: userConversationItemId,
+                updatedAt: new Date(),
+              },
+            });
+          }
+        }
+
         updateOptimisticConversationItems({
           action: "insert",
           newItem: {
