@@ -177,17 +177,19 @@ export const chatRouter = createTRPCRouter({
 
           messages: buildConversationItemsTimeline({
             conversationItems: history,
-          }).map((item) => {
-            const { success, data } = z
-              .array(attachmentFileSchema)
-              .safeParse(item.attachments);
+          })
+            .filter((item) => !item.isRoot)
+            .map((item) => {
+              const { success, data } = z
+                .array(attachmentFileSchema)
+                .safeParse(item.attachments);
 
-            return {
-              role: item.role as "user" | "assistant",
-              content: item.content,
-              experimental_attachments: success ? data : undefined,
-            };
-          }),
+              return {
+                role: item.role as "user" | "assistant",
+                content: item.content,
+                experimental_attachments: success ? data : undefined,
+              };
+            }),
 
           toolChoice:
             input.chatMode === "image"
