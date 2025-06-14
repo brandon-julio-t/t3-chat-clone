@@ -15,6 +15,10 @@ import { ulid } from "ulid";
 import { z } from "zod";
 import { buildConversationItemsTimeline } from "~/domains/chat/logics";
 import {
+  getMockModelForGenerateText,
+  getMockModelForStreamText,
+} from "~/domains/chat/mock";
+import {
   attachmentFileSchema,
   sendMessageSchema,
 } from "~/domains/chat/schemas";
@@ -166,7 +170,10 @@ export const chatRouter = createTRPCRouter({
         };
 
         const stream = streamText({
-          model,
+          model:
+            process.env.NODE_ENV !== "production"
+              ? getMockModelForStreamText()
+              : model,
 
           messages: buildConversationItemsTimeline({
             conversationItems: history,
@@ -292,7 +299,11 @@ export const chatRouter = createTRPCRouter({
       if (conversation.title === DEFAULT_CONVERSATION_TITLE) {
         void (async () => {
           const response = await generateText({
-            model,
+            model:
+              process.env.NODE_ENV !== "production"
+                ? getMockModelForGenerateText()
+                : model,
+
             prompt: `
               You are a helpful assistant that generates a title for a conversation.
               The beginning message is: ${input.newChatContent}
