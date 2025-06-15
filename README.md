@@ -1,5 +1,39 @@
 Challenge accepted: https://cloneathon.t3.chat
 
+## 🛠️ Development
+
+### Step 1: Setup Infra
+
+```bash
+# setup .env
+# [!] remember to setup `BETTER_AUTH_SECRET`, hint: try `npx nanoid` or something
+# [!] need to se4tup `BLOB_READ_WRITE_TOKEN` from vercel KV
+cp .env.example .env
+
+# Install dependencies
+bun install
+
+# Setup DB
+# Ideally prisma migrate dev, but for speed we use prisma db push
+bun prisma db push
+```
+
+### Step 2: Run the App
+
+```bash
+# Run Caddy reverse proxy to enable HTTP/2 to fix electric sql performance issue
+# https://electric-sql.com/docs/guides/troubleshooting#slow-shapes-mdash-why-are-my-shapes-slow-in-the-browser-in-local-development
+caddy run
+
+# Start Docker containers (PostgreSQL and Electric SQL)
+docker compose up
+
+# Run development server
+bun dev
+```
+
+### Step 3: Visit https://localhost:4000
+
 # AI Chat App Requirements
 
 ## Core Requirements (Required)
